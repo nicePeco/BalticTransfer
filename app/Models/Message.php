@@ -14,6 +14,7 @@ class Message extends Model
         'offer_id',
         'sender_id',
         'message',
+        'receiver_id',
     ];
 
     public function sender()
@@ -24,5 +25,20 @@ class Message extends Model
     public function offer()
     {
         return $this->belongsTo(offers::class, 'offer_id');
+    }
+
+    public function receiver()
+    {
+        return $this->belongsTo(User::class, 'receiver_id');
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
     }
 }

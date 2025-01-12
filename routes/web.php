@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DirectMessagesController;
 use App\Http\Controllers\DriversController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\MessageController;
@@ -34,6 +35,10 @@ Route::get('/dashboard', function () {
     return view('home.home');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/messages/user', [DirectMessagesController::class, 'index'])
+    ->middleware('auth')
+    ->name('messages.user');
+Route::post('/messages/direct', [DirectMessagesController::class, 'store'])->name('messages.direct.store');
 
 
 Route::middleware('auth')->group(function () {
@@ -55,7 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/offers/accept/{ride}', [OffersController::class, 'acceptRide'])->name('offers.accept');
     Route::delete('/offers/{offer}/cancel', [OffersController::class, 'cancel'])->name('offers.cancel');
     Route::get('/offers/{offer}/accept', [OffersController::class, 'showAcceptedRide'])->name('offers.accept.show');
-    Route::get('/messages/{offerId}', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{offerId?}', [MessageController::class, 'index'])->name('messages.index');
     Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
     // Route::post('/notifications/{id}/read', function ($id) {
     //     $notification = auth()->user()->notifications()->findOrFail($id);
@@ -73,7 +78,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/offers/{offer}/rate', [OffersController::class, 'submitDriverRating'])->name('offers.rate.submit');
     Route::get('/offers/{offer_id}/rate-user', [OffersController::class, 'rateUserForm'])->name('offers.rateUser');
     Route::post('/offers/{offer_id}/rate-user', [OffersController::class, 'submitUserRating'])->name('offers.rateUser.submit');
-
+    // Route::get('/messages/user', [DirectMessagesController::class, 'index'])->name('messages.user');
+    // Route::post('/messages/direct', [DirectMessagesController::class, 'store'])->name('messages.direct.store');
 });
 
 
@@ -87,6 +93,23 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/offers/accept/{ride}', [OffersController::class, 'acceptRide'])->name('offers.accept');
     Route::delete('/offers/{offer}/cancel', [OffersController::class, 'cancel'])->name('offers.cancel');
     Route::get('/offers/{offer}/accept', [OffersController::class, 'showAcceptedRide'])->name('offers.accept.show');
+});
+
+//admin
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/users', [AdminController::class, 'viewUsers'])->name('admin.users');
+    Route::get('/admin/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+    Route::post('/admin/users/{id}/update', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::get('/admin/drivers', [AdminController::class, 'viewDrivers'])->name('admin.drivers');
+    Route::get('/admin/drivers/{id}/edit', [AdminController::class, 'editDriver'])->name('admin.drivers.edit');
+    Route::post('/admin/drivers/{id}/update', [AdminController::class, 'updateDriver'])->name('admin.drivers.update');
+    Route::get('/admin/rides', [AdminController::class, 'viewRides'])->name('admin.rides');
+    Route::get('/admin/rides/{id}/edit', [AdminController::class, 'editRide'])->name('admin.rides.edit');
+    Route::post('/admin/rides/{id}/update', [AdminController::class, 'updateRide'])->name('admin.rides.update');
+    Route::get('/admin/messages', [MessageController::class, 'viewMessages'])->name('admin.messages');
+    Route::get('/admin/messages/chat/{userId}', [DirectMessagesController::class, 'chat'])->name('admin.messages.chat');
+    Route::post('/admin/messages/reply', [DirectMessagesController::class, 'reply'])->name('admin.messages.reply');
 });
 
 require __DIR__.'/auth.php';

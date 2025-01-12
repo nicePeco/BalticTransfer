@@ -56,7 +56,7 @@
                     @endhasrole
                     @hasrole('admin')
                     {{-- Lietotājs ir drivers --}}
-                    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('driver.payment')">
+                    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                         {{ __('ADMIN') }}
                     </x-nav-link>
                     @endhasrole
@@ -107,6 +107,10 @@
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
+                        </x-dropdown-link>
+
+                        <x-dropdown-link :href="route('messages.user')">
+                            {{ __('Message us') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->

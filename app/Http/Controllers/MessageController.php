@@ -13,9 +13,13 @@ class MessageController extends Controller
      */
     public function index($offerId)
     {
-        $messages = Message::where('offer_id', $offerId)
-            ->with('sender:id,name')
-            ->orderBy('created_at', 'asc')
+        $messages = Message::with('sender:id,name')
+            ->when($offerId, function ($query, $offerId) {
+                $query->where('offer_id', $offerId); // If offer_id exists, filter by it
+            }, function ($query) {
+                $query->whereNull('offer_id'); // If no offer_id, fetch direct messages
+            })
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return response()->json($messages);
@@ -24,10 +28,10 @@ class MessageController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
+    // public function create()
+    // {
+    //     return view('messages.direct');
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -35,17 +39,87 @@ class MessageController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'offer_id' => 'required|exists:offers,id',
             'message' => 'required|string',
+            'offer_id' => 'nullable|exists:offers,id', // Offer ID is optional
         ]);
-
-        $message = Message::create([
-            'offer_id' => $request->offer_id,
+    
+        Message::create([
             'sender_id' => Auth::id(),
             'message' => $request->message,
+            'offer_id' => $request->offer_id, // If offer_id is null, it's a direct message
+            'receiver_id' => $request->user_id,
         ]);
+    
+        return response()->json(['success' => true]);
+    }
 
-        return response()->json($message);
+    // public function userMessages()
+    // {
+    //     // Fetch messages sent by the logged-in user
+    //     $messages = Message::where('sender_id', Auth::id())
+    //         ->orderBy('created_at', 'desc')
+    //         ->get();
+
+    //     // Return the view with the messages
+    //     return view('messages.user', compact('messages'));
+    // }
+
+
+    // public function sendDirectMessage(Request $request)
+    // {
+    //     $request->validate([
+    //         'message' => 'required|string',
+    //     ]);
+
+    //     Message::create([
+    //         'sender_id' => Auth::id(),
+    //         'message' => $request->message,
+    //         // Leave offer_id null for direct messages
+    //     ]);
+
+    //     return redirect()->back()->with('success', 'Your message has been sent to the admin.');
+    // }
+
+    public function viewMessages()
+    {
+        // // Fetch distinct users who have participated in direct messages (offer_id is null)
+        // $users = Message::whereNull('offer_id') // Only direct messages
+        // ->where(function ($query) {
+        //     $query->whereNotNull('sender_id') // Ensure sender exists
+        //         ->whereNotNull('receiver_id'); // Ensure receiver exists
+        // })
+        // ->get()
+        // ->flatMap(function ($message) {
+        //     // Get both sender and receiver as participants
+        //     return [$message->sender, $message->receiver];
+        // })
+        // ->filter() // Remove null participants
+        // ->unique('id'); // Ensure unique users
+
+        // // Fetch all direct messages for the admin dashboard
+        // $messages = Message::with('sender:id,name', 'receiver:id,name')
+        //     ->whereNull('offer_id') // Only direct messages
+        //     ->orderBy('created_at', 'desc')
+        //     ->get();
+
+        // return view('admin.messages.index', compact('users', 'messages'));
+        $adminId = 1;
+            // Fetch distinct senders of messages
+        $users = Message::with('sender:id,name')
+            ->whereNull('offer_id') // Only direct messages
+            ->whereNotNull('sender_id')
+            ->where('sender_id', '!=', $adminId) // Ensure sender exists
+            ->distinct('sender_id')
+            ->get()
+            ->pluck('sender'); // Get the sender details
+
+        $messages = Message::with('sender:id,name', 'receiver:id,name')
+            ->whereNull('offer_id') // Only direct messages
+            ->where('sender_id', '!=', $adminId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.messages.index', compact('users', 'messages'));
     }
 
     /**
