@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('city_one');
             $table->string('location_two');
             $table->dateTime('city_two');
-            // $table->string('distance')->nullable();
-            // $table->string('time')->nullable();
             $table->text('information');
             $table->timestamps();
         });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,9 +17,16 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('totalUsers', 'totalDrivers', 'totalRides'));
     }
 
-    public function viewUsers()
+    public function viewUsers(Request $request)
     {
-        $users = \App\Models\User::all();
+        $query = \App\Models\User::query();
+
+        if ($request->filled('search')) {
+            $query->where('id', $request->search);
+        }
+
+        $users = $query->get();
+
         return view('admin.users.index', compact('users'));
     }
 
@@ -103,7 +111,7 @@ class AdminController extends Controller
         $ride->passenger = \App\Models\User::find($ride->offers_id);
 
         $drivers = \App\Models\User::role('driver')->get();
-        $passengers = \App\Models\User::all(); // Assuming all users can be passengers
+        $passengers = \App\Models\User::all();
 
         return view('admin.rides.edit', compact('ride', 'drivers', 'passengers'));
     }
@@ -124,6 +132,38 @@ class AdminController extends Controller
         ]);
 
         return redirect()->route('admin.rides')->with('success', 'Ride updated successfully.');
+    }
+
+    public function suspendUser(Request $request, $id)
+    {
+        $request->validate([
+            'duration' => 'required|string|in:forever,3_days,7_days,1_month',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        if (!$user) {
+            return redirect()->route('admin.users')->withErrors('User not found.');
+        }    
+
+        $duration = match ($request->duration) {
+            'forever' => '2038-01-19 03:14:07',
+            '3_days' => now()->addDays(3),
+            '7_days' => now()->addDays(7),
+            '1_month' => now()->addMonth(),
+        };
+
+        $user->update(['suspended_until' => $duration]);
+
+        return redirect()->route('admin.users')->with('success', 'User suspended successfully.');
+    }
+
+    public function unsuspendUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->update(['suspended_until' => null]);
+
+        return redirect()->route('admin.users')->with('success', 'User unsuspended successfully.');
     }
 
 }

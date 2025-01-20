@@ -57,18 +57,6 @@ class DriversController extends Controller
         return view('driver.payment', compact('payments', 'totalEarnings', 'totalCompanyShare'));
     }
 
-
-    // public function paymentSummary($paymentId)
-    // {
-    //     $payment = Payment::findOrFail($paymentId);
-
-    //     return view('driver.payment', [
-    //         'totalPrice' => $payment->total_earnings + $payment->company_share,
-    //         'companyShare' => $payment->company_share,
-    //         'driverEarnings' => $payment->total_earnings,
-    //     ]);
-    // }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -102,22 +90,6 @@ class DriversController extends Controller
      */
     public function update(Request $request, Drivers $drivers)
     {
-            // // Retrieve the authenticated user
-            // $user = Auth::user();
-    
-            // // Check if a file was uploaded
-            // if ($request->hasFile('car_photo')) {
-            //     // Store the file and get the storage path
-            //     $path = $request->car_photo->store('images', 'public');
-                
-            //     // Update the user's profile photo path in the database
-            //     $user->update([
-            //         'car_photo' => $path
-            //     ]);
-            // }
-    
-            // // Redirect back to the profile page after updating
-            // return redirect()->route('');
     
     }
 

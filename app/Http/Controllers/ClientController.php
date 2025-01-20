@@ -28,7 +28,6 @@ class ClientController extends Controller
                 ->orderBy('city_two', 'asc')
                 ->get();
 
-            // Fetch applied offers for the current driver
             $driverId = Auth::user()->driver->id ?? null;
             if ($driverId) {
                 $appliedOffers = Ride::where('driver_id', $driverId)

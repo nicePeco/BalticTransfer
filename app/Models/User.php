@@ -29,6 +29,7 @@ class User extends Authenticatable
         'driver_id',
         'rating',
         'rating_count',
+        'suspended_until',
     ];
 
     /**
@@ -51,6 +52,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'suspended_until' => 'datetime',
         ];
     }
 

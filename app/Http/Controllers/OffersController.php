@@ -22,33 +22,17 @@ class OffersController extends Controller
      */
     public function index()
     {
-        // $offers = Offers::query()
-        // ->when(Auth::user()->driver, function ($query) {
-        //     // For drivers, only show unaccepted offers or their accepted offers
-        //     $query->whereNull('accepted_driver_id')
-        //           ->orWhere('accepted_driver_id', Auth::user()->driver->id);
-        // })
-        // ->when(!Auth::user()->driver, function ($query) {
-        //     // For non-drivers (offer creators), show only their offers
-        //     $query->where('offers_id', Auth::id());
-        // })
-        // ->get();
-
-        // return view('offers.index', compact('offers'));
         $offers = Offers::query()
             ->when(Auth::user()->driver, function ($query) {
-                // For drivers: Show unaccepted offers or offers accepted by this driver
                 $query->whereNull('accepted_driver_id')
                     ->orWhere('accepted_driver_id', Auth::user()->driver->id);
             })
             ->when(!Auth::user()->driver, function ($query) {
-                // For regular users: Show only their offers
                 $query->where('offers_id', Auth::id());
             })
-            ->orderBy('city_two', 'asc') // Sort offers by closest pick-up time
+            ->orderBy('city_two', 'asc')
             ->get();
 
-        // For drivers: Retrieve IDs of applied offers to show "Applied" status
         $appliedOffers = [];
         if (Auth::user()->driver) {
             $appliedOffers = Auth::user()->driver->rides()->pluck('offer_id')->toArray();
@@ -92,9 +76,7 @@ class OffersController extends Controller
     {
         $offers = Offers::with('rides')->findOrFail($id);
 
-        // Check if the offers is accepted
         if ($offers->accepted_driver_id) {
-            // Restrict visibility to the offers creator and the accepted driver
             if (Auth::id() !== $offers->offers_id && (!Auth::user()->driver || Auth::user()->driver->id !== $offers->accepted_driver_id)) {
                 abort(403, 'You are not authorized to view this ride.');
             }
@@ -102,14 +84,12 @@ class OffersController extends Controller
 
         $currentRide = null;
 
-        // If the user is authenticated and is a driver, find their ride application for this offers
         if (Auth::check() && Auth::user()->driver) {
             $currentRide = Ride::where('offer_id', $id)
                 ->where('driver_id', Auth::user()->driver->id ?? null)
                 ->first();
         }
 
-        // Check if there is an accepted ride for this offers
         if ($offers->accepted_driver_id) {
             $acceptedRide = $offers->rides->where('driver_id', $offers->accepted_driver_id)->first();
 
@@ -147,46 +127,22 @@ class OffersController extends Controller
     {
         $ride = Ride::findOrFail($rideId);
 
-        // Check if the authenticated user owns the offer
         $offer = $ride->offer;
         if (Auth::id() !== $offer->offers_id) {
             abort(403, 'You are not authorized to accept this offer.');
         }
 
-        // Update the accepted driver ID for the offer
         $offer->update([
             'accepted_driver_id' => $ride->driver_id,
         ]);
 
-        // Notify the driver (linked user)
-        $user = User::where('driver_id', $ride->driver_id)->first(); // Find the user by driver_id
+        $user = User::where('driver_id', $ride->driver_id)->first();
         if ($user) {
-            $user->notify(new DriverAcceptedNotification($offer)); // Notify the User model
+            $user->notify(new DriverAcceptedNotification($offer));
         }
 
         return redirect()->route('offers.show', $offer->id)->with('success', 'Driver has been accepted successfully.');
     }
-
-    // public function cancel(offers $offer)
-    // {
-    //     // if ($offer->accepted_driver_id) {
-    //     //     $offer->delete();
-    //     //     return redirect()->route('client.index')->with('success', 'The ride offer has been successfully canceled.');
-    //     // }
-
-    //     // return redirect()->route('offers.show', $offer->id)->with('error', 'No accepted ride to cancel.');
-    //     // Check if the offer has an accepted driver
-    //     if ($offer->accepted_driver_id) {
-    //         // Clear the accepted driver ID
-    //         $offer->update([
-    //             'accepted_driver_id' => null,
-    //         ]);
-
-    //         return redirect()->route('client.index')->with('success', 'The ride offer has been successfully canceled.');
-    //     }
-
-    //     return redirect()->route('offers.show', $offer->id)->with('error', 'No accepted ride to cancel.');
-    //     }
 
     public function showAcceptedRide($offerId)
     {
@@ -245,17 +201,14 @@ class OffersController extends Controller
 
     public function ongoing($offerId)
     {
-        // Retrieve the offer using the provided ID
         $offer = Offers::with('rides')->findOrFail($offerId);
 
-        // Check if the status is 'ongoing'
         if ($offer->status !== 'ongoing') {
             abort(403, 'This ride is not currently ongoing.');
         }
 
         $acceptedRide = $offer->rides->where('driver_id', $offer->accepted_driver_id)->first();
 
-        // Fetch necessary information
         $scheduledStartTime = Carbon::parse($offer->city_two);
         $currentTime = Carbon::now('Europe/Riga');
 
@@ -263,7 +216,6 @@ class OffersController extends Controller
             abort(404, 'No accepted ride found for this offer.');
         }
 
-        // Pass the information to the view
         return view('offers.ongoing', compact('offer', 'scheduledStartTime', 'currentTime', 'acceptedRide'));
     }
 
@@ -271,12 +223,10 @@ class OffersController extends Controller
     {
         $offer = Offers::findOrFail($offerId);
 
-        // Ensure only the accepted driver can finish the ride
         if (Auth::user()->driver->id !== $offer->accepted_driver_id) {
             abort(403, 'You are not authorized to finish this ride.');
         }
 
-        // Update the offer status to 'completed'
         $offer->status = 'completed';
          $offer->save();
 
@@ -287,7 +237,7 @@ class OffersController extends Controller
         }
 
         $totalPrice = $acceptedRide->price;
-        $companyShare = $totalPrice * 0.10; // 10% for the company
+        $companyShare = $totalPrice * 0.10;
         $driverEarnings = $totalPrice - $companyShare;
 
         Payment::create([
@@ -298,17 +248,16 @@ class OffersController extends Controller
             'week_end' => now()->endOfWeek()->toDateString(),
         ]);
 
-        $user = User::where('id', $offer->offers_id)->first(); // Assuming 'offers_id' is the user ID
+        $user = User::where('id', $offer->offers_id)->first();
         if ($user) {
-            $user->notify(new RateDriverNotification($offer)); // Notify the user
+            $user->notify(new RateDriverNotification($offer));
         }
 
         $driver = User::where('driver_id', $offer->accepted_driver_id)->first();
         if ($driver) {
-            $driver->notify(new RateUserNotification($offer)); // Notify the driver
+            $driver->notify(new RateUserNotification($offer));
         }
         
-        // $offer->user->notify(new RateDriverNotification($offer));
 
         return redirect()->route('driver.payment')->with([
             'totalPrice' => $totalPrice,
@@ -321,7 +270,6 @@ class OffersController extends Controller
     {
         $offer = Offers::findOrFail($offerId);
 
-        // Ensure only the user who created the offer can rate the driver
         if (Auth::id() !== $offer->offers_id) {
             abort(403, 'You are not authorized to rate this driver.');
         }
@@ -333,7 +281,6 @@ class OffersController extends Controller
     {
         $offer = Offers::with('acceptedDriver')->findOrFail($offerId);
 
-        // Ensure the user is authorized to rate this ride
         if (Auth::id() !== $offer->offers_id) {
             abort(403, 'Unauthorized action.');
         }
@@ -349,7 +296,6 @@ class OffersController extends Controller
             return redirect()->back()->with('error', 'No driver found for this ride.');
         }
 
-        // Update the driver's rating
         $currentRating = $driver->rating ?? 0;
         $currentRatingCount = $driver->rating_count;
 
@@ -360,10 +306,10 @@ class OffersController extends Controller
             'rating_count' => $currentRatingCount + 1,
         ]);
 
-        $offer->timestamps = false; // Temporarily disable timestamps
+        $offer->timestamps = false;
         $offer->user_rated_driver = true;
         $offer->save();
-        $offer->timestamps = true; // Re-enable timestamps
+        $offer->timestamps = true;
 
         return redirect()->route('offers.history')->with('success', 'Thank you for rating your driver!');
     }
@@ -372,7 +318,6 @@ class OffersController extends Controller
     {
         $offer = Offers::findOrFail($offerId);
 
-        // Ensure only the driver of the ride can rate the user
         if (Auth::user()->driver && Auth::user()->driver->id !== $offer->accepted_driver_id) {
             abort(403, 'You are not authorized to rate this user.');
         }
@@ -384,7 +329,6 @@ class OffersController extends Controller
     {
         $offer = Offers::findOrFail($offerId);
 
-        // Ensure only the driver of the ride can rate the user
         if (Auth::user()->driver && Auth::user()->driver->id !== $offer->accepted_driver_id) {
             abort(403, 'Unauthorized action.');
         }
@@ -394,14 +338,12 @@ class OffersController extends Controller
             'feedback' => 'nullable|string|max:500',
         ]);
 
-        // Retrieve the user to be rated
         $user = User::where('id', $offer->offers_id)->first();
 
         if (!$user) {
             return redirect()->back()->with('error', 'No user found for this ride.');
         }
 
-        // Calculate the new rating
         $currentRating = $user->rating ?? 0;
         $currentRatingCount = $user->rating_count;
 
@@ -412,11 +354,10 @@ class OffersController extends Controller
             'rating_count' => $currentRatingCount + 1,
         ]);
 
-        // Update the offer to indicate the driver has rated the user
-        $offer->timestamps = false; // Disable timestamps temporarily
+        $offer->timestamps = false;
         $offer->driver_rated_user = true;
         $offer->save();
-        $offer->timestamps = true; // Re-enable timestamps
+        $offer->timestamps = true;
 
         return redirect()->route('offers.history')->with('success', 'Thank you for rating the user!');
     }
@@ -426,13 +367,13 @@ class OffersController extends Controller
     {
         $completedOffers = Offers::where('status', 'completed')
             ->where(function ($query) {
-                $query->where('offers_id', Auth::id()) // Rides created by the user
+                $query->where('offers_id', Auth::id())
                     ->orWhereHas('rides', function ($q) {
-                        $q->where('driver_id', Auth::user()->driver->id ?? null); // Rides driven by the driver
+                        $q->where('driver_id', Auth::user()->driver->id ?? null);
                     });
             })
             ->with(['rides' => function ($query) {
-                $query->select('offer_id', 'price', 'driver_id'); // Include price in the query
+                $query->select('offer_id', 'price', 'driver_id');
             }])
             ->orderBy('updated_at', 'desc')
             ->get();
@@ -445,17 +386,12 @@ class OffersController extends Controller
      */
     public function destroy(offers $offers)
     {
-        // $offers->delete();
 
-        // return redirect()->route('client.index');
-        // Get the user who created the offer
-        // Notify the offer creator
         $creator = User::find($offers->offers_id);
         if ($creator) {
             $creator->notify(new RideCancelledNotification($offers));
         }
 
-        // Notify the driver (if an accepted driver exists)
         if ($offers->accepted_driver_id) {
             $driver = User::where('driver_id', $offers->accepted_driver_id)->first();
             if ($driver) {

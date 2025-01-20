@@ -30,10 +30,15 @@ Route::get('/register/driver', [RegisteredUserController::class, 'createDriver']
 Route::post('/register/driver', [RegisteredUserController::class, 'storeDriver'])->name('register.driver');
 
 Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+Route::view('/403', 'errors.403')->name('403');
 
+// Route::get('/dashboard', function () {
+//     return view('home.home');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/dashboard', function () {
     return view('home.home');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware([\App\Http\Middleware\CheckSuspension::class])->name('dashboard');
+
 
 Route::get('/messages/user', [DirectMessagesController::class, 'index'])
     ->middleware('auth')
@@ -62,11 +67,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/offers/{offer}/accept', [OffersController::class, 'showAcceptedRide'])->name('offers.accept.show');
     Route::get('/messages/{offerId?}', [MessageController::class, 'index'])->name('messages.index');
     Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
-    // Route::post('/notifications/{id}/read', function ($id) {
-    //     $notification = auth()->user()->notifications()->findOrFail($id);
-    //     $notification->markAsRead();
-    //     return redirect()->back()->with('success', 'Notification marked as read.');
-    // })->name('notifications.read');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification'])->name('notifications.delete');
     Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
@@ -78,13 +78,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/offers/{offer}/rate', [OffersController::class, 'submitDriverRating'])->name('offers.rate.submit');
     Route::get('/offers/{offer_id}/rate-user', [OffersController::class, 'rateUserForm'])->name('offers.rateUser');
     Route::post('/offers/{offer_id}/rate-user', [OffersController::class, 'submitUserRating'])->name('offers.rateUser.submit');
-    // Route::get('/messages/user', [DirectMessagesController::class, 'index'])->name('messages.user');
-    // Route::post('/messages/direct', [DirectMessagesController::class, 'store'])->name('messages.direct.store');
 });
 
+Route::middleware([\App\Http\Middleware\CheckSuspension::class])->group(function () {
+    Route::get('/driver-dashboard', [DriversController::class, 'index'])->name('driver.dashboard');
+});
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/driver-dashboard', [DriversController::class, 'index'])->name('driver.dashboard');
+    // Route::get('/driver-dashboard', [DriversController::class, 'index'])->name('driver.dashboard');
     Route::get('/driver/edit', [ProfileController::class, 'editDriver'])->name('driver.edit');
     Route::patch('/driver/edit', [ProfileController::class, 'updateDriver'])->name('driver.update');
     Route::post('/rides', [RideController::class, 'store'])->name('rides.store');
@@ -110,6 +111,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/messages', [MessageController::class, 'viewMessages'])->name('admin.messages');
     Route::get('/admin/messages/chat/{userId}', [DirectMessagesController::class, 'chat'])->name('admin.messages.chat');
     Route::post('/admin/messages/reply', [DirectMessagesController::class, 'reply'])->name('admin.messages.reply');
+    Route::post('/admin/users/suspend/{id}', [AdminController::class, 'suspendUser'])->name('admin.users.suspend');
+    Route::post('/admin/users/unsuspend/{id}', [AdminController::class, 'unsuspendUser'])->name('admin.users.unsuspend');
 });
 
 require __DIR__.'/auth.php';

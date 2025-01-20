@@ -15,9 +15,9 @@ class MessageController extends Controller
     {
         $messages = Message::with('sender:id,name')
             ->when($offerId, function ($query, $offerId) {
-                $query->where('offer_id', $offerId); // If offer_id exists, filter by it
+                $query->where('offer_id', $offerId);
             }, function ($query) {
-                $query->whereNull('offer_id'); // If no offer_id, fetch direct messages
+                $query->whereNull('offer_id');
             })
             ->orderBy('created_at', 'asc')
             ->get();
@@ -28,10 +28,6 @@ class MessageController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    // public function create()
-    // {
-    //     return view('messages.direct');
-    // }
 
     /**
      * Store a newly created resource in storage.
@@ -40,13 +36,13 @@ class MessageController extends Controller
     {
         $request->validate([
             'message' => 'required|string',
-            'offer_id' => 'nullable|exists:offers,id', // Offer ID is optional
+            'offer_id' => 'nullable|exists:offers,id',
         ]);
     
         Message::create([
             'sender_id' => Auth::id(),
             'message' => $request->message,
-            'offer_id' => $request->offer_id, // If offer_id is null, it's a direct message
+            'offer_id' => $request->offer_id,
             'receiver_id' => $request->user_id,
         ]);
     
@@ -56,17 +52,16 @@ class MessageController extends Controller
     public function viewMessages()
     {
         $adminId = 1;
-            // Fetch distinct senders of messages
         $users = Message::with('sender:id,name')
-            ->whereNull('offer_id') // Only direct messages
+            ->whereNull('offer_id')
             ->whereNotNull('sender_id')
-            ->where('sender_id', '!=', $adminId) // Ensure sender exists
+            ->where('sender_id', '!=', $adminId)
             ->distinct('sender_id')
             ->get()
-            ->pluck('sender'); // Get the sender details
+            ->pluck('sender');
 
         $messages = Message::with('sender:id,name', 'receiver:id,name')
-            ->whereNull('offer_id') // Only direct messages
+            ->whereNull('offer_id')
             ->where('sender_id', '!=', $adminId)
             ->orderBy('created_at', 'desc')
             ->get();

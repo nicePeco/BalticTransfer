@@ -11,15 +11,15 @@ class DirectMessagesController extends Controller
 {
     public function index()
     {
-        $adminId = 1; // Replace this with the actual admin ID or logic to get the admin's ID
+        $adminId = 1;
 
         $messages = Message::with('sender:id,name')
             ->where(function ($query) use ($adminId) {
-                $query->where('sender_id', Auth::id()) // Messages sent by the user
-                    ->orWhere('sender_id', $adminId)->where('receiver_id', Auth::id());; // Messages sent by the admin
+                $query->where('sender_id', Auth::id())
+                    ->orWhere('sender_id', $adminId)->where('receiver_id', Auth::id());
             })
-            ->whereNull('offer_id') // Only direct messages (not related to offers)
-            ->orderBy('created_at', 'asc') // Sort by oldest to newest
+            ->whereNull('offer_id')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         return view('messages.user', compact('messages'));
@@ -28,6 +28,7 @@ class DirectMessagesController extends Controller
     /**
      * Store a newly created message in the database.
      */
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -36,10 +37,10 @@ class DirectMessagesController extends Controller
     
     
         Message::create([
-            'sender_id' => Auth::id(), // The logged-in user
+            'sender_id' => Auth::id(),
             'message' => $request->message,
             'offer_id' => null,
-            'receiver_id' => Auth::id(), // Mark as a direct message
+            'receiver_id' => Auth::id(),
         ]);
     
         return redirect()->route('messages.user')->with('success', 'Your message has been sent to the admin.');
@@ -47,18 +48,18 @@ class DirectMessagesController extends Controller
 
     public function chat($userId)
     {
-        $adminId = Auth::id(); // Admin's ID (logged-in admin)
+        $adminId = Auth::id();
 
         $messages = Message::with('sender:id,name')
             ->where(function ($query) use ($userId, $adminId) {
-                $query->where('sender_id', $userId)// Messages sent by the user
-                    ->orWhere('sender_id', $adminId)->where('receiver_id', $userId);; // Messages sent by the admin
+                $query->where('sender_id', $userId)
+                    ->orWhere('sender_id', $adminId)->where('receiver_id', $userId);
             })
-            ->whereNull('offer_id') // Only direct messages
-            ->orderBy('created_at', 'asc') // Sort by oldest to newest
+            ->whereNull('offer_id')
+            ->orderBy('created_at', 'asc')
             ->get();
 
-        $user = User::findOrFail($userId); // Get the user details for the chat
+        $user = User::findOrFail($userId);
 
         return view('admin.messages.chat', compact('messages', 'user'));
     }
@@ -67,14 +68,14 @@ class DirectMessagesController extends Controller
     {
         $request->validate([
             'message' => 'required|string',
-            'user_id' => 'required|exists:users,id', // Validate that the user exists
+            'user_id' => 'required|exists:users,id',
         ]);
     
         Message::create([
-            'sender_id' => Auth::id(), // Admin's ID (logged-in admin)
-            'receiver_id' => $request->user_id, // The user receiving the message
+            'sender_id' => Auth::id(),
+            'receiver_id' => $request->user_id,
             'message' => $request->message,
-            'offer_id' => null, // Direct message
+            'offer_id' => null,
         ]);
     
         return redirect()->route('admin.messages.chat', ['userId' => $request->user_id])
