@@ -104,15 +104,21 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/users/{id}/update', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::get('/admin/drivers', [AdminController::class, 'viewDrivers'])->name('admin.drivers');
     Route::get('/admin/drivers/{id}/edit', [AdminController::class, 'editDriver'])->name('admin.drivers.edit');
-    Route::post('/admin/drivers/{id}/update', [AdminController::class, 'updateDriver'])->name('admin.drivers.update');
+    // Route::post('/admin/drivers/{id}/update', [AdminController::class, 'updateDriver'])->name('admin.drivers.update');
     Route::get('/admin/rides', [AdminController::class, 'viewRides'])->name('admin.rides');
     Route::get('/admin/rides/{id}/edit', [AdminController::class, 'editRide'])->name('admin.rides.edit');
     Route::post('/admin/rides/{id}/update', [AdminController::class, 'updateRide'])->name('admin.rides.update');
     Route::get('/admin/messages', [MessageController::class, 'viewMessages'])->name('admin.messages');
+    Route::get('/admin/messages/mark-as-read/{userId}', [MessageController::class, 'markMessagesAsRead'])->name('admin.messages.markAsRead');
     Route::get('/admin/messages/chat/{userId}', [DirectMessagesController::class, 'chat'])->name('admin.messages.chat');
     Route::post('/admin/messages/reply', [DirectMessagesController::class, 'reply'])->name('admin.messages.reply');
     Route::post('/admin/users/suspend/{id}', [AdminController::class, 'suspendUser'])->name('admin.users.suspend');
     Route::post('/admin/users/unsuspend/{id}', [AdminController::class, 'unsuspendUser'])->name('admin.users.unsuspend');
+    Route::post('/admin/messages/mark-read/{id}', [DirectMessagesController::class, 'markRead'])->name('admin.messages.mark-read');
+    Route::post('/admin/messages/mark-unread/{id}', [DirectMessagesController::class, 'markUnread'])->name('admin.messages.mark-unread');
+    Route::post('/admin/drivers/{id}/has-paid', [AdminController::class, 'hasPaid'])->name('admin.drivers.hasPaid');
+    Route::post('/admin/drivers/{id}/has-not-paid', [AdminController::class, 'hasNotPaid'])->name('admin.drivers.hasNotPaid');
+    Route::post('/admin/drivers/{id}/unsuspend', [AdminController::class, 'unsuspendDriver'])->name('admin.drivers.unsuspend');
 });
 
 require __DIR__.'/auth.php';

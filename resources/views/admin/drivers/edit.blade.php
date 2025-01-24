@@ -11,9 +11,6 @@
                 </ul>
             </div>
         @endif
-
-        <form action="{{ route('admin.drivers.update', $driver->id) }}" method="POST" class="space-y-6">
-            @csrf
             <div>
                 <label for="name" class="block text-gray-700 dark:text-gray-300">{{ __('Name') }}</label>
                 <input type="text" id="name" name="name" value="{{ $driver->name }}" class="w-full mt-1 p-2 border border-gray-300 rounded">
@@ -30,8 +27,35 @@
                 </select>
             </div>
             <div>
-                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">{{ __('Update Driver') }}</button>
+                <label class="block text-gray-700 dark:text-gray-300">{{ __('Total Company Share (€)') }}</label>
+                <p class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-100">
+                    €{{ number_format($driver->total_company_share ?? 0, 2) }}
+                </p>
             </div>
-        </form>
+            <div class="flex items-center space-x-4 mt-6">
+                <!-- Has Paid Button -->
+                <form action="{{ route('admin.drivers.hasPaid', $driver->id) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded">
+                        {{ __('Has Paid') }}
+                    </button>
+                </form>
+
+                <!-- Has Not Paid Button -->
+                <form action="{{ route('admin.drivers.hasNotPaid', $driver->id) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded">
+                        {{ __('Has Not Paid') }}
+                    </button>
+                </form>
+                @if ($driver->suspended_until)
+                    <form action="{{ route('admin.drivers.unsuspend', $driver->id) }}" method="POST" class="mt-4">
+                        @csrf
+                        <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded">
+                            {{ __('Unsuspend Driver') }}
+                        </button>
+                    </form>
+                @endif
+            </div>
     </div>
 </x-app-layout>

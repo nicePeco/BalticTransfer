@@ -32,6 +32,21 @@ class CheckSuspension
                 ]);
             }
         }
+
+        if ($user->driver && $user->driver->suspended_until) {
+            if ($user->driver->suspended_until === '2038-01-19 03:14:07') {
+                Auth::logout();
+                return redirect()->route('403')->with([
+                    'suspension_type' => 'forever',
+                ]);
+            } elseif (now()->lessThan($user->driver->suspended_until)) {
+                Auth::logout();
+                return redirect()->route('403')->with([
+                    'suspension_type' => 'temporary',
+                    'suspended_until' => $user->driver->suspended_until->format('Y-m-d H:i:s'),
+                ]);
+            }
+        }
         
 
         return $next($request);

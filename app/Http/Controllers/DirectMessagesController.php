@@ -82,4 +82,20 @@ class DirectMessagesController extends Controller
                          ->with('success', 'Message sent successfully.');
     }
 
+    public function markRead($id)
+    {
+        $message = Message::findOrFail($id);
+        $message->update(['is_read' => true]);
+
+        return redirect()->back()->with('success', 'Message marked as read.');
+    }
+
+    public function markUnread($id)
+    {
+        $message = Message::findOrFail($id);
+        $message->update(['is_read' => false]);
+
+        return redirect()->back()->with('success', 'Message marked as unread.');
+    }
+
 }

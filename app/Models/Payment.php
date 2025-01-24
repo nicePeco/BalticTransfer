@@ -20,6 +20,36 @@ class Payment extends Model
 
     public function driver()
     {
-        return $this->belongsTo(Drivers::class);
+        return $this->belongsTo(Drivers::class, 'driver_id');
     }
+
+    protected static function booted()
+    {
+        static::created(function ($payment) {
+            // Update the total company share for the driver
+            $driver = Drivers::find($payment->driver_id);
+            if ($driver) {
+                $driver->total_company_share = Payment::where('driver_id', $driver->id)->sum('company_share');
+                $driver->save();
+            }
+        });
+
+        static::updated(function ($payment) {
+            // Update the total company share for the driver
+            $driver = Drivers::find($payment->driver_id);
+            if ($driver) {
+                $driver->total_company_share = Payment::where('driver_id', $driver->id)->sum('company_share');
+                $driver->save();
+            }
+        });
+
+        static::deleted(function ($payment) {
+            // Update the total company share for the driver when a payment is deleted
+            $driver = Drivers::find($payment->driver_id);
+            if ($driver) {
+                $driver->total_company_share = Payment::where('driver_id', $driver->id)->sum('company_share');
+                $driver->save();
+            }
+        });
+    }  
 }

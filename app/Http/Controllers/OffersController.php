@@ -248,6 +248,10 @@ class OffersController extends Controller
             'week_end' => now()->endOfWeek()->toDateString(),
         ]);
 
+        $driver = Auth::user()->driver;
+        $driver->total_company_share += $companyShare;
+        $driver->save();
+
         $user = User::where('id', $offer->offers_id)->first();
         if ($user) {
             $user->notify(new RateDriverNotification($offer));

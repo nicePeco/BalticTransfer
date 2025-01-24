@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -54,19 +56,30 @@ class AdminController extends Controller
         return redirect()->route('admin.users')->with('success', 'User updated successfully.');
     }
 
-    public function viewDrivers()
+    public function viewDrivers(Request $request)
     {
-        $drivers = \App\Models\User::role('driver')->get();
+        $query = \App\Models\Drivers::query();
+
+        if ($request->filled('search')) {
+            $query->where('id', $request->search);
+        }
+
+        $drivers = $query->get();
+
+        foreach ($drivers as $driver) {
+            $totalCompanyShare = $driver->total_company_share;
+        }
+
         return view('admin.drivers.index', compact('drivers'));
     }
 
     public function editDriver($id)
     {
-        $driver = \App\Models\User::findOrFail($id);
+        $driver = \App\Models\Drivers::findOrFail($id);
 
-        if (!$driver->hasRole('driver')) {
-            return redirect()->route('admin.drivers')->with('error', 'User is not a driver.');
-        }
+        $totalCompanyShare = $driver->total_company_share;
+
+        $driver->total_company_share = $totalCompanyShare;
 
         return view('admin.drivers.edit', compact('driver'));
     }
@@ -97,7 +110,7 @@ class AdminController extends Controller
     public function viewRides()
     {
         $rides = \App\Models\offers::all()->map(function ($ride) {
-            $ride->driver = \App\Models\User::find($ride->accepted_driver_id);
+            $ride->driver = \App\Models\Drivers::find($ride->accepted_driver_id);
             $ride->passenger = \App\Models\User::find($ride->offers_id);
             return $ride;
         });
@@ -107,7 +120,7 @@ class AdminController extends Controller
     public function editRide($id)
     {
         $ride = \App\Models\offers::findOrFail($id);
-        $ride->driver = \App\Models\User::find($ride->accepted_driver_id);
+        $ride->driver = \App\Models\Drivers::find($ride->accepted_driver_id);
         $ride->passenger = \App\Models\User::find($ride->offers_id);
 
         $drivers = \App\Models\User::role('driver')->get();
@@ -164,6 +177,33 @@ class AdminController extends Controller
         $user->update(['suspended_until' => null]);
 
         return redirect()->route('admin.users')->with('success', 'User unsuspended successfully.');
+    }
+
+    public function hasPaid($id)
+    {
+        $driver = \App\Models\Drivers::findOrFail($id);
+
+        $driver->update(['total_company_share' => 0]);
+
+        return redirect()->route('admin.drivers.edit', $driver->id)->with('success', 'Driver has paid. Total company share reset to 0.');
+    }
+
+    public function hasNotPaid(Request $request, $id)
+    {
+        $driver = \App\Models\Drivers::findOrFail($id);
+
+        $driver->update(['suspended_until' => '2038-01-19 03:14:07']);
+
+        return redirect()->route('admin.drivers.edit', $driver->id)->with('error', 'Driver is now suspended. They must pay the company share to be unsuspended.');
+    }
+
+    public function unsuspendDriver($id)
+    {
+        $driver = \App\Models\Drivers::findOrFail($id);
+
+        $driver->update(['suspended_until' => null]);
+    
+        return redirect()->route('admin.drivers.edit', $driver->id)->with('success', 'Driver has been unsuspended.');
     }
 
 }

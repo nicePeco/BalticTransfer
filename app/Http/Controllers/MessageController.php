@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MessageController extends Controller
 {
@@ -52,21 +54,25 @@ class MessageController extends Controller
     public function viewMessages()
     {
         $adminId = 1;
-        $users = Message::with('sender:id,name')
-            ->whereNull('offer_id')
-            ->whereNotNull('sender_id')
-            ->where('sender_id', '!=', $adminId)
-            ->distinct('sender_id')
-            ->get()
-            ->pluck('sender');
 
-        $messages = Message::with('sender:id,name', 'receiver:id,name')
-            ->whereNull('offer_id')
-            ->where('sender_id', '!=', $adminId)
-            ->orderBy('created_at', 'desc')
+        $messages = Message::select('messages.*')
+            ->join(
+                DB::raw('(SELECT MAX(created_at) as latest_time, sender_id, receiver_id FROM messages GROUP BY sender_id, receiver_id) as latest_messages'),
+                function ($join) {
+                    $join->on('messages.created_at', '=', 'latest_messages.latest_time')
+                        ->on('messages.sender_id', '=', 'latest_messages.sender_id')
+                        ->on('messages.receiver_id', '=', 'latest_messages.receiver_id');
+                }
+            )
+            ->where(function ($query) use ($adminId) {
+                $query->where('messages.sender_id', '!=', $adminId)
+                    ->where('messages.receiver_id', '!=', $adminId);
+            })
+            ->orderBy('messages.created_at', 'desc')
+            ->with('sender:id,name')
             ->get();
 
-        return view('admin.messages.index', compact('users', 'messages'));
+        return view('admin.messages.index', compact('messages'));
     }
 
     /**

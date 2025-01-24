@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Drivers;
 use App\Models\Payment;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -46,15 +47,41 @@ class DriversController extends Controller
 
         $weekStart = now()->startOfWeek()->toDateString();
         $weekEnd = now()->endOfWeek()->toDateString();
+        $monthStart = now()->startOfMonth()->toDateString();
+        $monthEnd = now()->endOfMonth()->toDateString();
+        $yearStart = now()->startOfYear()->toDateString();
+        $yearEnd = now()->endOfYear()->toDateString();
 
-        $payments = Payment::where('driver_id', $driver->id)
+        $weeklyPayments = Payment::where('driver_id', $driver->id)
             ->whereBetween('week_start', [$weekStart, $weekEnd])
             ->get();
 
-        $totalEarnings = $payments->sum('total_earnings');
-        $totalCompanyShare = $payments->sum('company_share');
+        $monthlyPayments = Payment::where('driver_id', $driver->id)
+            ->whereBetween('week_start', [$monthStart, $monthEnd])
+            ->get();
 
-        return view('driver.payment', compact('payments', 'totalEarnings', 'totalCompanyShare'));
+        $yearlyPayments = Payment::where('driver_id', $driver->id)
+            ->whereBetween('week_start', [$yearStart, $yearEnd])
+            ->get();
+
+        $totalEarningsWeekly = $weeklyPayments->sum('total_earnings');
+        $totalCompanyShareWeekly = $weeklyPayments->sum('company_share');
+
+        $totalEarningsMonthly = $monthlyPayments->sum('total_earnings');
+        $totalCompanyShareMonthly = $monthlyPayments->sum('company_share');
+
+        $totalEarningsYearly = $yearlyPayments->sum('total_earnings');
+        $totalCompanyShareYearly = $yearlyPayments->sum('company_share');
+
+        return view('driver.payment', compact(
+            'weeklyPayments',
+            'totalEarningsWeekly',
+            'totalCompanyShareWeekly',
+            'totalEarningsMonthly',
+            'totalCompanyShareMonthly',
+            'totalEarningsYearly',
+            'totalCompanyShareYearly'
+        ));
     }
 
     /**

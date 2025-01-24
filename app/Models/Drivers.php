@@ -22,6 +22,8 @@ class Drivers extends Model
         'car_year',
         'rating',
         'rating_count',
+        'total_company_share',
+        'suspended_until',
     ];
 
     protected $hidden = [

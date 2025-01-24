@@ -71,4 +71,8 @@ class User extends Authenticatable
         return $this->hasMany(offers::class);
     }
     
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'driver_id');
+    }
 }
