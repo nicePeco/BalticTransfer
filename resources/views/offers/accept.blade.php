@@ -48,7 +48,7 @@
                     </form>
                 @elseif($offer->status === 'ongoing')
                     <!-- <p class="text-green-500 font-bold mb-4">Ride is ongoing</p>
-                    <form action="{{ route('offers.ongoing', ['offerId' => $offer->id]) }}" method="GET">
+                    <form action="{{ route('offers.ongoing', $offer->hashed_id) }}" method="GET">
                         @csrf
                         <button type="submit" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">View Information</button>
                     </form> -->
@@ -56,7 +56,7 @@
             @endhasrole
             @if($offer->status === 'ongoing')
                 <p class="text-green-500 font-bold mb-4">Ride is ongoing</p>
-                    <form action="{{ route('offers.ongoing', ['offerId' => $offer->id]) }}" method="GET">
+                    <form action="{{ 'offers.ongoing', $offer->hashed_id }}" method="GET">
                         @csrf
                         <button type="submit" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">View Information</button>
                     </form>
@@ -148,25 +148,26 @@
                 </div>
             @endif -->
         </div>
-        <div class="bg-gray-100 dark:bg-gray-900 rounded-lg shadow-md p-6 mt-8">
+        <div class="bg-gray-100 dark:bg-gray-900 rounded-lg shadow-md p-6 mt-12">
             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4 border-b-2 pb-2">Chat</h2>
-            <div id="chat-box" class="h-64 overflow-y-auto bg-white dark:bg-gray-800 rounded-lg p-4 border">
+
+            <div id="chat-box" class="h-64 sm:h-80 overflow-y-auto bg-white dark:bg-gray-800 rounded-lg p-4 border">
 
             </div>
 
-            <form id="message-form" class="mt-4 flex">
+            <form id="message-form" class="mt-4 flex flex-col sm:flex-row gap-2">
                 @csrf
                 <input type="hidden" id="offer_id" value="{{ $offer->id }}">
                 <input 
                     type="text" 
                     id="message-input" 
                     placeholder="Type your message..." 
-                    class="flex-1 px-4 py-2 border rounded-l-lg focus:outline-none"
+                    class="flex-1 px-4 py-3 border rounded-lg sm:rounded-l-lg sm:rounded-r-none focus:outline-none focus:ring focus:border-blue-500"
                     required
                 />
                 <button 
                     type="submit" 
-                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-r-lg transition-all duration-300">
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg sm:rounded-r-lg sm:rounded-l-none transition-all duration-300">
                     Send
                 </button>
             </form>

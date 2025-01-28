@@ -8,29 +8,43 @@
                     <a href="{{ route('dashboard') }}">
                     </a>
                 </div> -->
+                <div class="absolute top-4 left-4 flex items-center gap-4 sm:hidden">
+                    <!-- Profile Picture -->
+                    @if(Auth::user()->profile_photo)
+                        <img class="rounded-full border border-gray-300 shadow-sm" 
+                            src="{{ asset('storage/' . Auth::user()->profile_photo) }}" 
+                            alt="profile_image" 
+                            style="width: 40px; height: 40px;">
+                    @else
+                        <img class="rounded-full border border-gray-300 shadow-sm" 
+                            src="https://usdeafsoccer.com/wp-content/uploads/2022/05/no-profile-pic.png" 
+                            alt="profile_image" 
+                            style="width: 40px; height: 40px;">
+                    @endif
+                </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @hasrole('driver')
-                        {{-- Lietotājs ir drivers --}}
-                    <x-nav-link :href="route('driver.dashboard')" :active="request()->routeIs('driver.dashboard')">
-                        {{ __('Drivers profile') }}
+                        {{-- driver --}}
+                    <x-nav-link :href="route('driver.dashboard')" :active="request()->routeIs('home.index')">
+                        {{ __('Home') }}
                     </x-nav-link>
                     @else
-                        {{-- Lietotājs nav drivers --}}
+                        {{-- user --}}
                     <x-nav-link :href="route('home.index')" :active="request()->routeIs('home.index')">
                         {{ __('Home') }}
                     </x-nav-link>
                     @endhasrole
                     @hasrole('driver')
-                        {{-- Lietotājs ir drivers --}}
+                        {{-- driver --}}
                     @else
                     <x-nav-link :href="route('offers.test')" :active="request()->routeIs('offers.test')">
                         {{ __('Request a ride') }}
                     </x-nav-link>
                     @endhasrole
                     @hasrole('driver')
-                        {{-- Lietotājs ir drivers --}}
+                        {{-- driver --}}
                         <x-nav-link :href="route('client.index')" :active="request()->routeIs('client.index')">
                         {{ __('Available rides') }}
                         </x-nav-link>
@@ -40,7 +54,7 @@
                     </x-nav-link>
                     @endhasrole
                     @hasrole('driver')
-                        {{-- Lietotājs ir drivers --}}
+                        {{-- driver --}}
                     <x-nav-link :href="route('driver.applications')" :active="request()->routeIs('driver.applications')">
                         {{ __('My applications') }}
                     </x-nav-link>
@@ -49,7 +63,7 @@
                         {{ __('Ride history') }}
                     </x-nav-link>
                     @hasrole('driver')
-                        {{-- Lietotājs ir drivers --}}
+                        {{-- driver --}}
                     <x-nav-link :href="route('driver.payment')" :active="request()->routeIs('driver.payment')">
                         {{ __('My earnings') }}
                     </x-nav-link>
@@ -73,7 +87,7 @@
 
                     @if($ongoingOffer)
                         {{-- Show Ongoing Offer --}}
-                        <x-nav-link :href="route('offers.ongoing', ['offerId' => $ongoingOffer->id])" :active="request()->routeIs('offers.ongoing')" class="bg-green-700 hover:bg-green-600 text-white text-sm font-semibold py-1 px-3 rounded shadow-md transition-all duration-300 ease-in-out">
+                        <x-nav-link :href="route('offers.ongoing', ['hashid' => $ongoingOffer->hashed_id])" :active="request()->routeIs('offers.ongoing')" class="bg-green-700 hover:bg-green-600 text-white text-sm font-semibold py-1 px-3 rounded shadow-md transition-all duration-300 ease-in-out">
                             {{ __('Ongoing Ride') }}
                         </x-nav-link>
                     @endif
@@ -83,7 +97,9 @@
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <!-- notifiaction meginajums -->
-                @include('layouts.notifications')
+                <div x-cloak>
+                    @include('layouts.notifications')
+                </div>
 
                 @if(Auth::user()->profile_photo)
                     <img class="image rounded-full" src="{{ asset('storage/' . Auth::user()->profile_photo) }}" alt="profile_image" style="width: 50px; height: 50px; padding: 5px; margin-right: 10px;">
@@ -141,10 +157,76 @@
 
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+        <div x-cloak>
+            @include('layouts.notifications')
+        </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+            @hasrole('driver')
+                {{-- driver --}}
+            <x-responsive-nav-link :href="route('driver.dashboard')" :active="request()->routeIs('home.index')">
+                {{ __('Home') }}
             </x-responsive-nav-link>
+            @else
+                {{-- user --}}
+            <x-responsive-nav-link :href="route('home.index')" :active="request()->routeIs('home.index')">
+                {{ __('Home') }}
+            </x-responsive-nav-link>
+            @endhasrole
+            @hasrole('driver')
+                {{-- driver --}}
+            @else
+            <x-responsive-nav-link :href="route('offers.test')" :active="request()->routeIs('offers.test')">
+                {{ __('Request a ride') }}
+            </x-responsive-nav-link>
+            @endhasrole
+            @hasrole('driver')
+                {{-- driver --}}
+                <x-responsive-nav-link :href="route('client.index')" :active="request()->routeIs('client.index')">
+                {{ __('Available rides') }}
+                </x-responsive-nav-link>
+            @else
+            <x-responsive-nav-link :href="route('client.index')" :active="request()->routeIs('client.index')">
+                {{ __('Your rides') }}
+            </x-responsive-nav-link>
+            @endhasrole
+            @hasrole('driver')
+                {{-- driver --}}
+            <x-responsive-nav-link :href="route('driver.applications')" :active="request()->routeIs('driver.applications')">
+                {{ __('My applications') }}
+            </x-responsive-nav-link>
+            @endhasrole
+            <x-responsive-nav-link :href="route('offers.history')" :active="request()->routeIs('offers.history')">
+                {{ __('Ride history') }}
+            </x-responsive-nav-link>
+            @hasrole('driver')
+                {{-- driver --}}
+            <x-responsive-nav-link :href="route('driver.payment')" :active="request()->routeIs('driver.payment')">
+                {{ __('My earnings') }}
+            </x-responsive-nav-link>
+            @endhasrole
+            @hasrole('admin')
+            {{-- Lietotājs ir drivers --}}
+            <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                {{ __('ADMIN') }}
+            </x-responsive-nav-link>
+            @endhasrole
+            @php
+                $ongoingOffer = App\Models\offers::where('status', 'ongoing')
+                    ->where(function($query) {
+                        $query->where('offers_id', Auth::id())
+                            ->orWhereHas('rides', function($subQuery) {
+                                $subQuery->where('driver_id', Auth::user()->driver->id ?? null);
+                            });
+                    })
+                    ->first();
+            @endphp
+
+            @if($ongoingOffer)
+                {{-- Show Ongoing Offer --}}
+                <x-responsive-nav-link :href="route('offers.ongoing', ['hashid' => $ongoingOffer->hashed_id])" :active="request()->routeIs('offers.ongoing')" class="bg-green-700 hover:bg-green-600 text-white text-sm font-semibold py-1 px-3 rounded shadow-md transition-all duration-300 ease-in-out">
+                    {{ __('Ongoing Ride') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

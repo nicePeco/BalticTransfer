@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User;
 use App\Notifications\DriverAppliedNotification;
+use Hashids\Hashids;
 
 class Ride extends Model
 {
@@ -27,5 +28,11 @@ class Ride extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'offers_id');
+    }
+
+    public function getHashedIdAttribute()
+    {
+        $hashids = new Hashids(env('APP_KEY'), 10); // 10-character hash
+        return $hashids->encode($this->id);
     }
 }

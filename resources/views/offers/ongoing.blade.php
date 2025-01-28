@@ -61,19 +61,19 @@
 
                     </div>
 
-                    <form id="message-form" class="mt-4 flex">
+                    <form id="message-form" class="mt-4 flex flex-col sm:flex-row gap-2">
                         @csrf
                         <input type="hidden" id="offer_id" value="{{ $offer->id }}">
                         <input 
                             type="text" 
                             id="message-input" 
                             placeholder="Type your message..." 
-                            class="flex-1 px-4 py-3 border rounded-l-lg focus:outline-none focus:ring focus:border-blue-500"
+                            class="flex-1 px-4 py-3 border rounded-lg sm:rounded-l-lg sm:rounded-r-none focus:outline-none focus:ring focus:border-blue-500"
                             required
                         />
                         <button 
                             type="submit" 
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-r-lg transition-all duration-300">
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg sm:rounded-r-lg sm:rounded-l-none transition-all duration-300">
                             Send
                         </button>
                     </form>

@@ -55,7 +55,7 @@
                         <div class="mt-4 text-center">
                             @if ($offer->status === 'ongoing')
                             <!-- Show "Ongoing" button if the ride is ongoing -->
-                            <form action="{{ route('offers.ongoing', ['offerId' => $offer->id]) }}" method="GET">
+                            <form action="{{ route('offers.ongoing', ['hashid' => $offer->hashed_id]) }}" method="GET">
                                 @csrf
                                 <button type="submit" class="inline-block bg-green-600 text-white text-lg font-bold py-4 px-8 rounded-full shadow-lg transform hover:scale-105 hover:bg-green-700 transition-all duration-300 ease-in-out">
                                     Ongoing
@@ -85,7 +85,7 @@
                         @elseif ($offer->status === 'ongoing' && $offer->accepted_driver_id === (Auth::user()->driver->id ?? null))
                             <!-- If the ride is ongoing and accepted by this driver -->
                             <div class="mt-4 text-center">
-                            <form action="{{ route('offers.ongoing', ['offerId' => $offer->id]) }}" method="GET">
+                            <form action="{{ route('offers.ongoing', ['hashid' => $offer->hashed_id]) }}" method="GET">
                                 @csrf
                                 <button type="submit" class="inline-block bg-green-600 text-white text-lg font-bold py-4 px-8 rounded-full shadow-lg transform hover:scale-105 hover:bg-green-700 transition-all duration-300 ease-in-out">
                                     Ongoing Ride
@@ -109,7 +109,7 @@
 
                     <!-- View Button -->
                     <div class="text-center mt-6">
-                        <a href="{{ route('offers.show', $offer->id) }}" 
+                        <a href="{{ route('offers.show', $offer->hashed_id) }}" 
                            class="inline-block bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110">
                             View Details
                         </a>

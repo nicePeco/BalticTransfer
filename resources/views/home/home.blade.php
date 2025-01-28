@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="py-10">
-        <section class="relative bg-center bg-cover bg-no-repeat h-screen" style="background-image: url('https://www.company-registration-latvia.lv/wp-content/uploads/2021/06/vita-notturna-Riga-Latvia-n-1024x614-1-1.jpg');">
+        <section class="relative bg-center bg-cover bg-no-repeat h-screen" style="background-image: url('{{ asset('storage/images/home-blade.jpg') }}');">
             <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/30"></div>
             <div class="relative px-4 mx-auto max-w-screen-xl text-center py-24 lg:py-56">
                 <h1 class="mb-6 text-5xl font-extrabold tracking-tight leading-tight text-white sm:text-6xl lg:text-7xl">
@@ -19,43 +19,61 @@
                 </div>
             </div>
         </section>
-        <div class="flex flex-wrap justify-center gap-8 py-16 px-6 bg-gray-100 dark:bg-gray-800">
-            <figure class="relative group max-w-sm transition-all duration-300">
-                <img class="rounded-lg shadow-xl w-[350px] h-[250px] object-cover group-hover:scale-105 transform transition-transform duration-500" src="https://c.files.bbci.co.uk/E0C6/production/_103724575_prius-64-plate-006_toyota.jpg" alt="Pick a ride">
-                <figcaption class="absolute bottom-4 left-4 bg-black bg-opacity-75 px-6 py-3 text-lg text-white rounded-lg shadow-md">
-                    Pick a Ride
-                </figcaption>
-            </figure>
-            <figure class="relative group max-w-sm transition-all duration-300">
-                <img class="rounded-lg shadow-xl w-[350px] h-[250px] object-cover group-hover:scale-105 transform transition-transform duration-500" src="https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-elantra-limited-106-64ef85e2044f5.jpg?crop=0.661xw:0.496xh;0.197xw,0.381xh&resize=1200:*" alt="Pick a driver">
-                <figcaption class="absolute bottom-4 left-4 bg-black bg-opacity-75 px-6 py-3 text-lg text-white rounded-lg shadow-md">
-                    Pick a Driver
-                </figcaption>
-            </figure>
-            <figure class="relative group max-w-sm transition-all duration-300">
-                <img class="rounded-lg shadow-xl w-[350px] h-[250px] object-cover group-hover:scale-105 transform transition-transform duration-500" src="https://hips.hearstapps.com/hmg-prod/images/2025-volkswagen-jetta-107-6679be9c4f143.jpg?crop=0.821xw:0.615xh;0.0897xw,0.272xh&resize=1200:*" alt="Pick the price">
-                <figcaption class="absolute bottom-4 left-4 bg-black bg-opacity-75 px-6 py-3 text-lg text-white rounded-lg shadow-md">
-                    Pick the Price
-                </figcaption>
-            </figure>
-        </div>
-        <div class="text-center py-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white">
-            <h1 class="text-6xl font-extrabold leading-tight mb-4 animate-pulse">
-                And Enjoy Your Journey!
-            </h1>
-            <p class="text-lg font-medium mb-6">
-                Experience the comfort, safety, and ease of traveling with us.
-            </p>
-            <!-- <div>
-                <a href="{{ route('offers.index') }}" class="inline-block px-8 py-4 text-lg font-bold text-blue-700 bg-white rounded-lg shadow-lg hover:bg-gray-100 transition">
-                    Start Your Ride
-                </a>
-            </div> -->
-            <div>
-                <a href="{{ route('offers.test') }}" class="inline-block px-8 py-4 text-lg font-bold text-blue-700 bg-white rounded-lg shadow-lg hover:bg-gray-100 transition">
-                    Start Your Ride
-                </a>
+        <section class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+        <div class="py-20 max-w-6xl mx-auto text-center">
+            <h2 class="text-4xl font-extrabold mb-6">How It Works</h2>
+            <p class="text-lg mb-10">Simple steps to get your perfect ride.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transform hover:scale-105 transition">
+                    <span class="block text-5xl font-bold text-blue-600 mb-3">1</span>
+                    <h3 class="text-2xl font-semibold mb-2">Choose Your Destination</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Enter your pick-up and drop-off locations.</p>
+                </div>
+
+                <div class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transform hover:scale-105 transition">
+                    <span class="block text-5xl font-bold text-blue-600 mb-3">2</span>
+                    <h3 class="text-2xl font-semibold mb-2">Pick a Driver</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Browse drivers and select the best fit for you.</p>
+                </div>
+
+                <div class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transform hover:scale-105 transition">
+                    <span class="block text-5xl font-bold text-blue-600 mb-3">3</span>
+                    <h3 class="text-2xl font-semibold mb-2">Enjoy the Ride</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Sit back, relax, and enjoy your trip!</p>
+                </div>
             </div>
         </div>
+        <div class="py-20 max-w-6xl mx-auto text-center">
+            <h2 class="text-4xl font-extrabold mb-6 text-gray-900 dark:text-white">What Our Riders Say</h2>
+            <p class="text-lg mb-10 text-gray-600 dark:text-gray-300">Hear from happy customers who have used our service.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg transform hover:scale-105 transition">
+                    <p class="text-lg font-semibold">"The best travel experience I've had! Highly recommend."</p>
+                    <p class="text-gray-500 mt-2">- Alex Johnson</p>
+                </div>
+
+                <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg transform hover:scale-105 transition">
+                    <p class="text-lg font-semibold">"Easy to use, great drivers, and safe rides. Love it!"</p>
+                    <p class="text-gray-500 mt-2">- Sarah Williams</p>
+                </div>
+
+                <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg transform hover:scale-105 transition">
+                    <p class="text-lg font-semibold">"Affordable prices and comfortable trips. Would use again!"</p>
+                    <p class="text-gray-500 mt-2">- Michael Lee</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="py-16 bg-blue-600 text-white text-center">
+            <h2 class="text-5xl font-extrabold mb-4">Ready to Ride?</h2>
+            <p class="text-lg mb-6">Book your trip now and travel with comfort.</p>
+            <a href="{{ route('offers.test') }}" 
+            class="inline-block px-8 py-4 text-lg font-bold bg-white text-blue-700 rounded-lg shadow-lg hover:bg-gray-100 transition">
+                Start Your Journey
+            </a>
+        </div>
+    </section>
     </div>
 </x-app-layout>

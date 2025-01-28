@@ -12,6 +12,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OffersController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RideController;
+use App\Http\Middleware\EnsureAdmin;
 use App\Models\Notification;
 use App\Models\UserNotification;
 use Illuminate\Support\Facades\Auth;
@@ -29,12 +30,8 @@ Route::post('/register', [RegisteredUserController::class, 'store'])->name('regi
 Route::get('/register/driver', [RegisteredUserController::class, 'createDriver'])->name('register.driver.form');
 Route::post('/register/driver', [RegisteredUserController::class, 'storeDriver'])->name('register.driver');
 
-Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::view('/403', 'errors.403')->name('403');
 
-// Route::get('/dashboard', function () {
-//     return view('home.home');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/dashboard', function () {
     return view('home.home');
 })->middleware([\App\Http\Middleware\CheckSuspension::class])->name('dashboard');
@@ -58,25 +55,27 @@ Route::middleware('auth')->group(function () {
     Route::get('/offers', [OffersController::class, 'index'])->name('offers.index');
     Route::post('/offers', [OffersController::class, 'store'])->name('offers.store');
     Route::get('/offers/test', [OffersController::class, 'test'])->name('offers.test');
-    Route::get('/offers/{offers}', [OffersController::class, 'show'])->name('offers.show');
+    // Route::get('/offers/{offers}', [OffersController::class, 'show'])->name('offers.show');
+    Route::get('/offers/{hashid}', [OffersController::class, 'show'])->name('offers.show');
     Route::post('/offers/{offers}/edit', [OffersController::class, 'edit'])->name('offers.edit');
     Route::patch('/offers/{offers}', [OffersController::class, 'update'])->name('offers.update');
     Route::delete('/offers/{offers}', [OffersController::class, 'destroy'])->name('offers.destroy');
     Route::post('/offers/accept/{ride}', [OffersController::class, 'acceptRide'])->name('offers.accept');
     Route::delete('/offers/{offer}/cancel', [OffersController::class, 'cancel'])->name('offers.cancel');
-    Route::get('/offers/{offer}/accept', [OffersController::class, 'showAcceptedRide'])->name('offers.accept.show');
+    // Route::get('/offers/{offer}/accept', [OffersController::class, 'showAcceptedRide'])->name('offers.accept.show');
+    Route::get('/offers/{hashid}/accept', [OffersController::class, 'showAcceptedRide'])->name('offers.accept.show');
     Route::get('/messages/{offerId?}', [MessageController::class, 'index'])->name('messages.index');
     Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification'])->name('notifications.delete');
     Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::get('/start-ride/{offerId}', [OffersController::class, 'startRide'])->name('start.ride');
-    Route::get('/offers/{offerId}/ongoing', [OffersController::class, 'ongoing'])->name('offers.ongoing');
-    Route::get('/offers/{offer_id}/rate', [OffersController::class, 'rateDriverForm'])->name('offers.rate');
+    Route::get('/offers/{hashid}/ongoing', [OffersController::class, 'ongoing'])->name('offers.ongoing');
+    Route::get('/offers/{hashid}/rate', [OffersController::class, 'rateDriverForm'])->name('offers.rate');
     Route::patch('/offers/{offerId}/finish', [OffersController::class, 'finishRide'])->name('offers.finish');
     Route::get('/driver/weekly-summary', [DriversController::class, 'weeklySummary'])->name('driver.payment');
     Route::post('/offers/{offer}/rate', [OffersController::class, 'submitDriverRating'])->name('offers.rate.submit');
-    Route::get('/offers/{offer_id}/rate-user', [OffersController::class, 'rateUserForm'])->name('offers.rateUser');
+    Route::get('/offers/{hashid}/rate-user', [OffersController::class, 'rateUserForm'])->name('offers.rateUser');
     Route::post('/offers/{offer_id}/rate-user', [OffersController::class, 'submitUserRating'])->name('offers.rateUser.submit');
 });
 
@@ -93,12 +92,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/rides/my-applications', [RideController::class, 'myApplications'])->name('driver.applications');
     Route::post('/offers/accept/{ride}', [OffersController::class, 'acceptRide'])->name('offers.accept');
     Route::delete('/offers/{offer}/cancel', [OffersController::class, 'cancel'])->name('offers.cancel');
-    Route::get('/offers/{offer}/accept', [OffersController::class, 'showAcceptedRide'])->name('offers.accept.show');
+    // Route::get('/offers/{offer}/accept', [OffersController::class, 'showAcceptedRide'])->name('offers.accept.show');
+    Route::get('/offers/{hashid}/accept', [OffersController::class, 'showAcceptedRide'])->name('offers.accept.show');
 });
 
 //admin
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', EnsureAdmin::class])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/users', [AdminController::class, 'viewUsers'])->name('admin.users');
     Route::get('/admin/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::post('/admin/users/{id}/update', [AdminController::class, 'updateUser'])->name('admin.users.update');

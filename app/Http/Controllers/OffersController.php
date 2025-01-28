@@ -14,9 +14,12 @@ use App\Notifications\RideCancelledNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Hashids\Hashids;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class OffersController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -72,8 +75,41 @@ class OffersController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($hashid)
     {
+        // $offers = Offers::with('rides')->findOrFail($id);
+
+        // if ($offers->accepted_driver_id) {
+        //     if (Auth::id() !== $offers->offers_id && (!Auth::user()->driver || Auth::user()->driver->id !== $offers->accepted_driver_id)) {
+        //         abort(403, 'You are not authorized to view this ride.');
+        //     }
+        // }
+
+        // $currentRide = null;
+
+        // if (Auth::check() && Auth::user()->driver) {
+        //     $currentRide = Ride::where('offer_id', $id)
+        //         ->where('driver_id', Auth::user()->driver->id ?? null)
+        //         ->first();
+        // }
+
+        // if ($offers->accepted_driver_id) {
+        //     $acceptedRide = $offers->rides->where('driver_id', $offers->accepted_driver_id)->first();
+
+        //     return view('offers.show', compact('offers', 'acceptedRide', 'currentRide'));
+        // }
+
+        // return view('offers.show', compact('offers', 'currentRide'));
+
+        $hashids = new Hashids(env('APP_KEY'), 10);
+        $decodedId = $hashids->decode($hashid);
+
+        if (empty($decodedId)) {
+            abort(404, 'Offer not found.');
+        }
+
+        $id = $decodedId[0];
+
         $offers = Offers::with('rides')->findOrFail($id);
 
         if ($offers->accepted_driver_id) {
@@ -141,26 +177,59 @@ class OffersController extends Controller
             $user->notify(new DriverAcceptedNotification($offer));
         }
 
-        return redirect()->route('offers.show', $offer->id)->with('success', 'Driver has been accepted successfully.');
+        $hashids = new Hashids(env('APP_KEY'), 10);
+        $hashedId = $hashids->encode($offer->id);
+
+        return redirect()->route('offers.show', $hashedId)->with('success', 'Driver has been accepted successfully.');
     }
 
-    public function showAcceptedRide($offerId)
+    public function showAcceptedRide($hashid)
     {
+        // $offer = offers::with(['rides.driver', 'user'])->findOrFail($offerId);
+
+        // $scheduledStartTime = Carbon::parse($offer->city_two);
+        
+        // $currentTime = Carbon::now('Europe/Riga');
+        
+        // if ($scheduledStartTime > $currentTime) {
+            
+        //     $timeLeftSeconds = $currentTime->diffInSeconds($scheduledStartTime, false);
+
+        //     $timeLeftMinutes = (int)($timeLeftSeconds / 60) - 120;
+        // } else {
+            
+        //     $timeLeftSeconds = $currentTime->diffInSeconds($scheduledStartTime, false);
+
+        //     $timeLeftMinutes = (int)($timeLeftSeconds / 60) - 120;
+        // }
+
+        // if (Auth::id() !== $offer->offers_id && (!$offer->accepted_driver_id || Auth::user()->driver->id !== $offer->accepted_driver_id)) {
+        //     abort(403, 'Unauthorized access');
+        // }
+
+        // $acceptedRide = $offer->rides->where('driver_id', $offer->accepted_driver_id)->first();
+
+        // return view('offers.accept', compact('offer', 'acceptedRide', 'timeLeftMinutes', 'scheduledStartTime', 'currentTime'));
+
+        $hashids = new Hashids(env('APP_KEY'), 10);
+        $decodedId = $hashids->decode($hashid);
+
+        if (empty($decodedId)) {
+            abort(404, 'Offer not found.');
+        }
+
+        $offerId = $decodedId[0];
+
         $offer = offers::with(['rides.driver', 'user'])->findOrFail($offerId);
 
         $scheduledStartTime = Carbon::parse($offer->city_two);
-        
         $currentTime = Carbon::now('Europe/Riga');
-        
-        if ($scheduledStartTime > $currentTime) {
-            
-            $timeLeftSeconds = $currentTime->diffInSeconds($scheduledStartTime, false);
 
+        if ($scheduledStartTime > $currentTime) {
+            $timeLeftSeconds = $currentTime->diffInSeconds($scheduledStartTime, false);
             $timeLeftMinutes = (int)($timeLeftSeconds / 60) - 120;
         } else {
-            
             $timeLeftSeconds = $currentTime->diffInSeconds($scheduledStartTime, false);
-
             $timeLeftMinutes = (int)($timeLeftSeconds / 60) - 120;
         }
 
@@ -199,8 +268,34 @@ class OffersController extends Controller
         return view('offers.ongoing', compact('timeLeftMinutes', 'scheduledStartTime', 'currentTime', 'offer', 'acceptedRide')); 
     }
 
-    public function ongoing($offerId)
+    public function ongoing($hashid)
     {
+        // $offer = Offers::with('rides')->findOrFail($offerId);
+
+        // if ($offer->status !== 'ongoing') {
+        //     abort(403, 'This ride is not currently ongoing.');
+        // }
+
+        // $acceptedRide = $offer->rides->where('driver_id', $offer->accepted_driver_id)->first();
+
+        // $scheduledStartTime = Carbon::parse($offer->city_two);
+        // $currentTime = Carbon::now('Europe/Riga');
+
+        // if (!$acceptedRide) {
+        //     abort(404, 'No accepted ride found for this offer.');
+        // }
+
+        // return view('offers.ongoing', compact('offer', 'scheduledStartTime', 'currentTime', 'acceptedRide'));
+        // Decode the hashed ID to get the numeric offer ID
+        $hashids = new Hashids(env('APP_KEY'), 10);
+        $decodedId = $hashids->decode($hashid);
+
+        if (empty($decodedId)) {
+            abort(404, 'Offer not found.');
+        }
+
+        $offerId = $decodedId[0];
+
         $offer = Offers::with('rides')->findOrFail($offerId);
 
         if ($offer->status !== 'ongoing') {
@@ -209,12 +304,12 @@ class OffersController extends Controller
 
         $acceptedRide = $offer->rides->where('driver_id', $offer->accepted_driver_id)->first();
 
-        $scheduledStartTime = Carbon::parse($offer->city_two);
-        $currentTime = Carbon::now('Europe/Riga');
-
         if (!$acceptedRide) {
             abort(404, 'No accepted ride found for this offer.');
         }
+
+        $scheduledStartTime = Carbon::parse($offer->city_two);
+        $currentTime = Carbon::now('Europe/Riga');
 
         return view('offers.ongoing', compact('offer', 'scheduledStartTime', 'currentTime', 'acceptedRide'));
     }
@@ -270,8 +365,25 @@ class OffersController extends Controller
         ]);
     }
 
-    public function rateDriverForm($offerId)
+    public function rateDriverForm($hashid)
     {
+        // $offer = Offers::findOrFail($offerId);
+
+        // if (Auth::id() !== $offer->offers_id) {
+        //     abort(403, 'You are not authorized to rate this driver.');
+        // }
+
+        // return view('offers.rate', compact('offer'));
+
+        $hashids = new Hashids(env('APP_KEY'), 10);
+        $decodedId = $hashids->decode($hashid);
+
+        if (empty($decodedId)) {
+            abort(404, 'Offer not found.');
+        }
+
+        $offerId = $decodedId[0];
+
         $offer = Offers::findOrFail($offerId);
 
         if (Auth::id() !== $offer->offers_id) {
@@ -318,8 +430,27 @@ class OffersController extends Controller
         return redirect()->route('offers.history')->with('success', 'Thank you for rating your driver!');
     }
 
-    public function rateUserForm($offerId)
+    public function rateUserForm($hashid)
     {
+        // $offer = Offers::findOrFail($offerId);
+
+        // if (Auth::user()->driver && Auth::user()->driver->id !== $offer->accepted_driver_id) {
+        //     abort(403, 'You are not authorized to rate this user.');
+        // }
+
+        // return view('offers.rate_user', compact('offer'));
+
+        // Decode the hashed ID to retrieve the numeric offer ID
+        // Decode the hashed ID to retrieve the numeric offer ID
+        $hashids = new Hashids(env('APP_KEY'), 10);
+        $decodedId = $hashids->decode($hashid);
+
+        if (empty($decodedId)) {
+            abort(404, 'Offer not found.');
+        }
+
+        $offerId = $decodedId[0];
+
         $offer = Offers::findOrFail($offerId);
 
         if (Auth::user()->driver && Auth::user()->driver->id !== $offer->accepted_driver_id) {

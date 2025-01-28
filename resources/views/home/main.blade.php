@@ -23,7 +23,7 @@
             @if (Route::has('login'))
                 <nav class="max-w-7xl mx-auto px-6 flex justify-between items-center">
                     <a href="/" class="text-2xl font-bold text-white hover:text-gray-300 transition">
-                        {{ __('RideApp') }}
+                        {{ __('Baltsfer') }}
                     </a>
                     <div class="space-x-1">
                         @auth
@@ -62,7 +62,7 @@
             </div>
         </main>
         <footer class="py-4 bg-black/80 text-center text-sm text-gray-400">
-            <p>&copy; {{ now()->year }} RideApp. {{ __('All rights reserved.') }}</p>
+            <p>&copy; {{ now()->year }} Baltsfer. {{ __('All rights reserved.') }}</p>
         </footer>
     </body>
 </html>

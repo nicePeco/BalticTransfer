@@ -27,11 +27,6 @@
                         <button type="submit" class="text-xs text-blue-500 hover:underline">View</button>
                     </form> -->
 
-                    <!-- <a href="{{ route('offers.rate', ['offer_id' => $notification->data['offer_id']]) }}" 
-                    class="text-xs text-blue-500 hover:underline ml-2">
-                        View
-                    </a> -->
-
                     <!-- mark as read-->
                     <button 
                         @click="markAsRead('{{ $notification->id }}')"

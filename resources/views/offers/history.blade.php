@@ -26,13 +26,13 @@
                     @endif
                 </div>
                 @if (Auth::id() === $offer->offers_id && !$offer->user_rated_driver)
-                    <a href="{{ route('offers.rate', $offer->id) }}" 
+                    <a href="{{ route('offers.rate', ['hashid' => $offer->hashed_id]) }}" 
                     class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg font-bold text-sm transition-all">
                         Rate Driver
                     </a>
                 @endif
                 @if (Auth::user()->driver && Auth::user()->driver->id === $offer->accepted_driver_id && !$offer->driver_rated_user)
-                    <a href="{{ route('offers.rateUser', $offer->id) }}" 
+                    <a href="{{ route('offers.rateUser', ['hashid' => $offer->hashed_id]) }}" 
                     class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg font-bold text-sm transition-all">
                         Rate User
                     </a>

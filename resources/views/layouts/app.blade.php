@@ -17,6 +17,7 @@
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-blue-400">
             @include('layouts.navigation')
+            @livewire('dynamic-content')
 
             <!-- Page Heading -->
             @isset($header)

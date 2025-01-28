@@ -5,6 +5,12 @@
             {{ __('Back') }}
         </a>
     </div>
+    <!-- Page Heading -->
+    <div class="text-center mt-10 mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">
+            {{ __('Login to your account') }}
+        </h1>
+    </div>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 

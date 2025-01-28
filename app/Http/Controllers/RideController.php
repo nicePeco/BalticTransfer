@@ -10,6 +10,7 @@ use App\Notifications\DriverAppliedNotification;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Notification;
+use Hashids\Hashids;
 
 class RideController extends Controller
 {
@@ -59,7 +60,10 @@ class RideController extends Controller
             'price' => $request->price,
         ]);
 
-        return redirect()->route('offers.show', $request->offer_id)
+        $hashids = new Hashids(env('APP_KEY'), 10);
+        $hashedId = $hashids->encode($request->offer_id);
+
+        return redirect()->route('offers.show', $hashedId)
             ->with('success', 'You have successfully applied for this ride.');
 
     }

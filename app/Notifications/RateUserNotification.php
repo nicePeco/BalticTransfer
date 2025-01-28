@@ -39,7 +39,7 @@ class RateUserNotification extends Notification
             'title' => 'Rate the user for the completed ride',
             'body' => 'The ride from ' . $this->offer->location_one . ' to ' . $this->offer->city_one . ' has been completed. Please rate the user in the ride history tab.',
             'offer_id' => $this->offer->id,
-            'route' => route('offers.rateUser', ['offer_id' => $this->offer->id]),
+            // 'route' => route('offers.rateUser', ['offer_id' => $this->offer->id]),
             'user_name' => $this->offer->user->name ?? 'Unknown User',
         ];
     }

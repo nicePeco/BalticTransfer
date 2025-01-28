@@ -40,7 +40,7 @@ class RateDriverNotification extends Notification
             'title' => 'Your ride has ended',
             'body' => 'Please rate your driver for the ride from ' . $this->offer->location_one . ' to ' . $this->offer->city_one . ' in the ride history tab.',
             'offer_id' => $this->offer->id,
-            'route' => route('offers.rate', ['offer_id' => $this->offer->id]),
+            // 'route' => route('offers.rate', ['offer_id' => $this->offer->id]),
             'driver_name' => $this->acceptedRide->driver->name ?? 'Unknown Driver',
         ];
     }

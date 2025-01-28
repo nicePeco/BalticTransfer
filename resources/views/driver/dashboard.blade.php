@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center space-x-4">
-            <!-- profile image -->
+        @livewire('dynamic-content')
             @if(Auth::user()->profile_photo)
                 <img class="rounded-full border-2 border-gray-300 dark:border-gray-600" 
                     src="{{ asset('storage/' . Auth::user()->profile_photo) }}" 

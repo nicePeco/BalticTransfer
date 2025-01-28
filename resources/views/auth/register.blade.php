@@ -4,6 +4,15 @@
             {{ __('Back') }}
         </a>
     </div>
+     <!-- Page Heading -->
+    <div class="text-center mt-10 mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">
+            {{ __('Register to Request a Ride') }}
+        </h1>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            {{ __('Fill in your details to create an account.') }}
+        </p>
+    </div>
     <form method="POST" action="{{ route('register') }}">
         @csrf
 

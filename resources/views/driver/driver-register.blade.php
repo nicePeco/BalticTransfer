@@ -4,16 +4,22 @@
             {{ __('Back') }}
         </a>
     </div>
+    <div class="text-center mt-10 mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">
+            {{ __('Register to becoma a driver') }}
+        </h1>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            {{ __('Fill in your details to create a driver account.') }}
+        </p>
+    </div>
     <form method="POST" action="{{ route('register.driver') }}">
         @csrf
 
-        <!-- name -->
         <div>
         <x-input-label for="name" :value="__('Name')" />
             <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">Driver</span>
 
-                <!-- input field -->
                 <x-text-input id="name" class="block mt-1 w-full pl-20 bg-white" 
                             type="text" name="name" :value="old('email')" 
                             placeholder="Enter your name" required />
@@ -22,14 +28,12 @@
             </div>
         </div>
 
-        <!-- email -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
 
@@ -41,7 +45,6 @@
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <!-- confirm password -->
         <div class="mt-4">
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
 

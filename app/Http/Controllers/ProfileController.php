@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -85,17 +86,32 @@ class ProfileController extends Controller
 
     public function upload(Request $request)
     {
+        // $user = Auth::user();
+
+        // if ($request->hasFile('profile_photo')) {
+        //     $path = $request->profile_photo->store('images', 'public');
+            
+        //     $user->update([
+        //         'profile_photo' => $path
+        //     ]);
+        // }
+
+        // return redirect()->route('profile.photo');
         $user = Auth::user();
 
         if ($request->hasFile('profile_photo')) {
+            if ($user->profile_photo) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+    
             $path = $request->profile_photo->store('images', 'public');
-            
+    
             $user->update([
                 'profile_photo' => $path
             ]);
         }
-
-        return redirect()->route('profile.photo');
+    
+        return redirect()->route('profile.photo')->with('success', 'Profile photo updated successfully!');
     }
 
     //12.3
@@ -132,6 +148,10 @@ class ProfileController extends Controller
         ]);
 
         if ($request->hasFile('car_photo')) {
+            if ($driver->car_photo) {
+                Storage::disk('public')->delete($driver->car_photo);
+            }
+    
             $path = $request->file('car_photo')->store('car_photos', 'public');
             $driver->update(['car_photo' => $path]);
         }
