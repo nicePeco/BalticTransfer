@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CarPhoto;
+use App\Models\Drivers;
 use App\Models\Payment;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -204,6 +207,52 @@ class AdminController extends Controller
         $driver->update(['suspended_until' => null]);
     
         return redirect()->route('admin.drivers.edit', $driver->id)->with('success', 'Driver has been unsuspended.');
+    }
+
+    public function viewDriverVerifications(Request $request)
+    {
+        $query = \App\Models\Drivers::where('verification_status', 'pending')->with('users');
+
+        $drivers = $query->get();
+
+        return view('admin.drivers.verifications', compact('drivers'));
+    }
+
+    public function updateDriverVerification(Request $request, $id)
+    {
+        $driver = Drivers::findOrFail($id);
+
+        $driver->update([
+            'verification_status' => $request->status,
+            'admin_notes' => $request->admin_notes ?? null,
+        ]);
+
+        return redirect()->route('admin.driver-verifications')
+            ->with('success', 'Verification updated successfully.');
+    }
+
+    public function downloadLicense($type, $id)
+    {
+        $driver = Drivers::findOrFail($id);
+        $filePath = $type === 'front' ? $driver->license_front : $driver->license_back;
+
+        if (!$filePath || !Storage::disk('public')->exists($filePath)) {
+            return redirect()->back()->withErrors('File not found.');
+        }
+
+        return Storage::disk('public')->download($filePath);
+    }
+
+    public function downloadCarPhoto($id)
+    {
+        $photo = CarPhoto::findOrFail($id);
+        $filePath = $photo->photo_path;
+
+        if (!$filePath || !Storage::disk('public')->exists($filePath)) {
+            return redirect()->back()->withErrors('File not found.');
+        }
+
+        return Storage::disk('public')->download($filePath);
     }
 
 }

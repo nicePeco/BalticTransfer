@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CarPhoto;
 use App\Models\Drivers;
 use App\Models\Payment;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 
 class DriversController extends Controller
 {
@@ -84,6 +85,50 @@ class DriversController extends Controller
         ));
     }
 
+    public function showVerificationForm()
+    {
+        return view('driver.verify');
+    }
+
+    public function submitVerification(Request $request)
+    {
+        $request->validate([
+            'license_front' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'license_back' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $driver = Auth::user()->driver;
+
+        if (!$driver) {
+            return redirect()->route('driver.dashboard')->withErrors('Driver profile not found.');
+        }
+
+        if ($request->hasFile('license_front')) {
+            if ($driver->license_front) {
+                Storage::disk('public')->delete($driver->license_front);
+            }
+            $frontPath = $request->file('license_front')->store('licenses', 'public');
+            $driver->license_front = $frontPath;
+        }
+
+        if ($request->hasFile('license_back')) {
+            if ($driver->license_back) {
+                Storage::disk('public')->delete($driver->license_back);
+            }
+            $backPath = $request->file('license_back')->store('licenses', 'public');
+            $driver->license_back = $backPath;
+        }
+
+        $driver->verification_status = 'pending';
+        $driver->save();
+
+        return redirect()->route('driver.dashboard')->with('success', 'Verification updated! Awaiting admin approval.');
+    }
+
+    public function waitingPage()
+    {
+        return view('driver.waiting');
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -125,7 +170,20 @@ class DriversController extends Controller
      */
     public function destroy(Drivers $drivers)
     {
-        //
+        $driver = Auth::user()->driver;
+
+        if ($driver) {
+            if ($driver->license_front) {
+                Storage::disk('public')->delete($driver->license_front);
+            }
+            if ($driver->license_back) {
+                Storage::disk('public')->delete($driver->license_back);
+            }
+    
+            $driver->delete();
+        }
+    
+        return redirect('/')->with('success', 'Your account has been deleted.');
     }
 
     public function showDriverProfile()

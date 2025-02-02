@@ -34,5 +34,6 @@
             </main>
         </div>
         <!-- 11.12 -->
+        @include('layouts.footer')
     </body>
 </html>

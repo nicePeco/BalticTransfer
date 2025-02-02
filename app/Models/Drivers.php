@@ -15,7 +15,6 @@ class Drivers extends Model
         'email',
         'password',
         'profile_photo',
-        //12.3
         'car_photo',
         'car_make', 
         'car_model', 
@@ -24,6 +23,12 @@ class Drivers extends Model
         'rating_count',
         'total_company_share',
         'suspended_until',
+        'license_plate',
+        'license_front',
+        'license_back',
+        'verification_status',
+        'admin_notes',
+        'license_plate',
     ];
 
     protected $hidden = [
@@ -47,6 +52,11 @@ class Drivers extends Model
     public function getFormattedRatingAttribute()
     {
         return $this->rating ? number_format($this->rating, 1) : 'Not Rated';
+    }
+
+    public function carPhotos()
+    {
+        return $this->hasMany(CarPhoto::class, 'driver_id');
     }
 
 }

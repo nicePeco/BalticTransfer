@@ -44,6 +44,21 @@ class OffersController extends Controller
         return view('offers.index', compact('offers', 'appliedOffers'));
     }
 
+    // public function search(Request $request)
+    // {
+    //     $search = $request->input('search');
+
+    //     $offers = Offers::query()
+    //         ->where(function ($query) use ($search) {
+    //             $query->where('city_one', 'LIKE', "%{$search}%")
+    //                 ->orWhere('city_two', 'LIKE', "%{$search}%");
+    //         })
+    //         ->orderBy('city_two', 'asc')
+    //         ->get();
+
+    //     return view('offers.index', compact('offers'));
+    // }
+
     /**
      * Show the form for creating a new resource.
      */

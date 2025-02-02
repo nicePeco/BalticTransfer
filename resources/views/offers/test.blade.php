@@ -75,26 +75,36 @@
                     ></textarea>
                 </div>
 
-                <div class="mb-4">
-                    <label for="distance" class="block text-lg font-medium text-gray-700 mb-2">Distance (km)</label>
-                    <input
-                        name="distance"
-                        id="hidden-distance"
-                        type="text"
-                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                        readonly
-                    />
+                <div class="mb-6">
+                    <label for="distance" class="block text-lg font-semibold text-gray-800 mb-2">Distance (km)</label>
+                    <div class="relative">
+                        <input
+                            name="distance"
+                            id="hidden-distance"
+                            type="text"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                            readonly
+                        />
+                        <span class="absolute inset-y-0 right-4 flex items-center text-gray-500 text-lg">
+                            📏
+                        </span>
+                    </div>
                 </div>
 
                 <div class="mb-6">
-                    <label for="time" class="block text-lg font-medium text-gray-700 mb-2">Time (hours)</label>
-                    <input
-                        name="time"
-                        id="hidden-time"
-                        type="text"
-                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                        readonly
-                    />
+                    <label for="time" class="block text-lg font-semibold text-gray-800 mb-2">Time (hours)</label>
+                    <div class="relative">
+                        <input
+                            name="time"
+                            id="hidden-time"
+                            type="text"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                            readonly
+                        />
+                        <span class="absolute inset-y-0 right-4 flex items-center text-gray-500 text-lg">
+                            ⏳
+                        </span>
+                    </div>
                 </div>
 
                 <div class="text-center">

@@ -32,7 +32,13 @@ Route::post('/register/driver', [RegisteredUserController::class, 'storeDriver']
 
 Route::view('/403', 'errors.403')->name('403');
 
+// Route::get('/dashboard', function () {
+//     return view('home.home');
+// })->middleware([\App\Http\Middleware\CheckSuspension::class])->name('dashboard');
 Route::get('/dashboard', function () {
+    if (Auth::check() && Auth::user()->roles->contains('name', 'driver')) {
+        return redirect('/driver-dashboard');
+    }
     return view('home.home');
 })->middleware([\App\Http\Middleware\CheckSuspension::class])->name('dashboard');
 
@@ -52,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/offers/history', [OffersController::class, 'showHistory'])->name('offers.history');
 
     Route::get('/client', [ClientController::class, 'index'])->name('client.index');
+    Route::get('/client/profile/search', [ClientController::class, 'search'])->name('client.profile.search');
     Route::get('/offers', [OffersController::class, 'index'])->name('offers.index');
     Route::post('/offers', [OffersController::class, 'store'])->name('offers.store');
     Route::get('/offers/test', [OffersController::class, 'test'])->name('offers.test');
@@ -79,14 +86,34 @@ Route::middleware('auth')->group(function () {
     Route::post('/offers/{offer_id}/rate-user', [OffersController::class, 'submitUserRating'])->name('offers.rateUser.submit');
 });
 
-Route::middleware([\App\Http\Middleware\CheckSuspension::class])->group(function () {
-    Route::get('/driver-dashboard', [DriversController::class, 'index'])->name('driver.dashboard');
+// Route::middleware([\App\Http\Middleware\CheckSuspension::class])->group(function () {
+//     Route::get('/driver-dashboard', [DriversController::class, 'index'])->name('driver.dashboard');
+// });
+// Route::middleware([\App\Http\Middleware\CheckSuspension::class])->group(function () {
+//     Route::get('/driver-dashboard', function () {
+//         if (!Auth::check() || !Auth::user()->roles->contains('name', 'driver')) {
+//             return redirect()->route('dashboard');
+//         }
+
+//         return app(DriversController::class)->index();
+//     })->name('driver.dashboard');
+// });
+
+// Route::get('/driver/waiting', [DriversController::class, 'waitingPage'])->name('driver.waiting');
+Route::middleware([\App\Http\Middleware\CheckDriverVerification::class])->group(function () {
+    Route::get('/driver-dashboard', function () {
+        return app(DriversController::class)->index();
+    })->name('driver.dashboard');
+    Route::get('/client', [ClientController::class, 'index'])->name('client.index');
 });
+
+Route::get('/driver/waiting', [DriversController::class, 'waitingPage'])->name('driver.waiting');
 
 Route::middleware(['auth'])->group(function () {
     // Route::get('/driver-dashboard', [DriversController::class, 'index'])->name('driver.dashboard');
     Route::get('/driver/edit', [ProfileController::class, 'editDriver'])->name('driver.edit');
-    Route::patch('/driver/edit', [ProfileController::class, 'updateDriver'])->name('driver.update');
+    Route::patch('/driver/update', [ProfileController::class, 'updateDriver'])->name('driver.update');
+    Route::patch('/driver/photos', [ProfileController::class, 'updateCarPhotos'])->name('driver.updatePhotos');
     Route::post('/rides', [RideController::class, 'store'])->name('rides.store');
     Route::delete('/rides/{ride}', [RideController::class, 'destroy'])->name('rides.destroy');
     Route::get('/rides/my-applications', [RideController::class, 'myApplications'])->name('driver.applications');
@@ -94,6 +121,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/offers/{offer}/cancel', [OffersController::class, 'cancel'])->name('offers.cancel');
     // Route::get('/offers/{offer}/accept', [OffersController::class, 'showAcceptedRide'])->name('offers.accept.show');
     Route::get('/offers/{hashid}/accept', [OffersController::class, 'showAcceptedRide'])->name('offers.accept.show');
+    Route::get('/driver/verify', [DriversController::class, 'showVerificationForm'])->name('driver.verify');
+    Route::post('/driver/verify', [DriversController::class, 'submitVerification'])->name('driver.verify.submit');
+    Route::patch('/driver/main-photo', [ProfileController::class, 'updateMainCarPhoto'])->name('driver.updateMainPhoto');
+    Route::delete('/driver/photo/{id}', [ProfileController::class, 'deleteCarPhoto'])->name('driver.deletePhoto');
 });
 
 //admin
@@ -120,6 +151,12 @@ Route::middleware(['auth', EnsureAdmin::class])->group(function () {
     Route::post('/admin/drivers/{id}/has-paid', [AdminController::class, 'hasPaid'])->name('admin.drivers.hasPaid');
     Route::post('/admin/drivers/{id}/has-not-paid', [AdminController::class, 'hasNotPaid'])->name('admin.drivers.hasNotPaid');
     Route::post('/admin/drivers/{id}/unsuspend', [AdminController::class, 'unsuspendDriver'])->name('admin.drivers.unsuspend');
+    // Route::get('/admin/driver/verifications', [AdminController::class, 'viewDriverVerifications'])->name('admin.driver-verifications');
+    // Route::patch('/admin/driver/verifications/{id}', [AdminController::class, 'updateDriverVerification'])->name('admin.driver-verification.update');
+    Route::get('/admin/driver/verifications', [AdminController::class, 'viewDriverVerifications'])->name('admin.driver-verifications');
+    Route::patch('/admin/driver/verifications/{id}', [AdminController::class, 'updateDriverVerification'])->name('admin.driver-verification.update');
+    Route::get('/admin/driver/download/{type}/{id}', [AdminController::class, 'downloadLicense'])->name('admin.download-license');
+    Route::get('/admin/download-car-photo/{id}', [AdminController::class, 'downloadCarPhoto'])->name('admin.download-car-photo');
 });
 
 require __DIR__.'/auth.php';

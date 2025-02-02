@@ -24,43 +24,63 @@
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mt-8">
-            <div class="flex items-center justify-between mb-6">
+        <div class="bg-gray-50 dark:bg-gray-900 p-5 rounded-lg shadow-md flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+            <!-- Time Left Indicator -->
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">⏳</span>
                 <p class="text-gray-700 dark:text-gray-300 text-lg font-semibold">
                     Time Left:
                 </p>
-                <p 
-                    class="text-xl font-bold px-4 py-2 rounded-md" 
-                    :class="{
-                        'bg-green-100 text-green-600': $timeLeftMinutes > 10,
-                        'bg-yellow-100 text-yellow-600': $timeLeftMinutes > 5 && $timeLeftMinutes <= 10,
-                        'bg-red-100 text-red-600': $timeLeftMinutes <= 5
-                    }"
-                >
-                    {{ $timeLeftMinutes }} minutes
-                </p>
             </div>
 
+            <!-- Time Progress Bar -->
+            <div class="relative w-full sm:w-64 mt-3 sm:mt-0">
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-6 shadow-inner overflow-hidden">
+                    <div 
+                        class="h-full rounded-full transition-all duration-300"
+                        :class="{
+                            'bg-green-500': $timeLeftMinutes > 10,
+                            'bg-yellow-500': $timeLeftMinutes > 5 && $timeLeftMinutes <= 10,
+                            'bg-red-500': $timeLeftMinutes <= 5
+                        }"
+                        :style="'width: ' + Math.max(0, ($timeLeftMinutes / 15) * 100) + '%;'"
+                    ></div>
+                </div>
+                <p 
+                    class="absolute inset-0 flex justify-center items-center text-lg font-bold text-white"
+                    :class="{
+                        'text-green-100': $timeLeftMinutes > 10,
+                        'text-yellow-100': $timeLeftMinutes > 5 && $timeLeftMinutes <= 10,
+                        'text-red-100': $timeLeftMinutes <= 5
+                    }"
+                >
+                    {{ $timeLeftMinutes }} min
+                </p>
+            </div>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:justify-between items-center bg-gray-50 dark:bg-gray-900 p-5 rounded-lg shadow-md">
             @hasrole('driver')
                 @if(Auth::user()->driver->id && $timeLeftMinutes <= 5 && $offer->status === 'pending')
                     <form action="{{ route('start.ride', ['offerId' => $offer->id]) }}" method="GET">
                         @csrf
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Start</button>
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md flex items-center gap-2 transition-all duration-300">
+                            🚀 Start Ride
+                        </button>
                     </form>
                 @elseif($offer->status === 'ongoing')
-                    <!-- <p class="text-green-500 font-bold mb-4">Ride is ongoing</p>
-                    <form action="{{ route('offers.ongoing', $offer->hashed_id) }}" method="GET">
-                        @csrf
-                        <button type="submit" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">View Information</button>
-                    </form> -->
+                    <p class="text-green-500 font-bold">✅ Ride is ongoing</p>
                 @endif
             @endhasrole
+
             @if($offer->status === 'ongoing')
-                <p class="text-green-500 font-bold mb-4">Ride is ongoing</p>
-                    <form action="{{ 'offers.ongoing', $offer->hashed_id }}" method="GET">
-                        @csrf
-                        <button type="submit" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">View Information</button>
-                    </form>
+                <form action="{{ route('offers.ongoing', ['hashid' => $offer->hashed_id]) }}" method="GET">
+                    @csrf
+                    <button type="submit" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg shadow-md flex items-center gap-2 transition-all duration-300">
+                        📄 View Ride Info
+                    </button>
+                </form>
             @endif
+        </div>
             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-6 border-b-2 pb-2">Ride Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg">
@@ -148,31 +168,36 @@
                 </div>
             @endif -->
         </div>
-        <div class="bg-gray-100 dark:bg-gray-900 rounded-lg shadow-md p-6 mt-12">
-            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4 border-b-2 pb-2">Chat</h2>
-
-            <div id="chat-box" class="h-64 sm:h-80 overflow-y-auto bg-white dark:bg-gray-800 rounded-lg p-4 border">
-
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-lg p-6 mt-12 w-full">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 border-b-2 pb-2">
+                💬 Chat
+            </h2>
+            <div id="chat-box" class="h-64 sm:h-80 overflow-y-auto bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-300 dark:border-gray-700 shadow-inner space-y-3">
             </div>
-
-            <form id="message-form" class="mt-4 flex flex-col sm:flex-row gap-2">
+            <form id="message-form" class="mt-4 flex flex-col sm:flex-row gap-3">
                 @csrf
                 <input type="hidden" id="offer_id" value="{{ $offer->id }}">
-                <input 
-                    type="text" 
-                    id="message-input" 
-                    placeholder="Type your message..." 
-                    class="flex-1 px-4 py-3 border rounded-lg sm:rounded-l-lg sm:rounded-r-none focus:outline-none focus:ring focus:border-blue-500"
-                    required
-                />
+
+                <div class="relative flex-1">
+                    <input 
+                        type="text" 
+                        id="message-input" 
+                        placeholder="Type your message..." 
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-l-lg sm:rounded-r-none bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        required
+                    />
+                    <span class="absolute right-4 top-3 text-gray-400 dark:text-gray-300">
+                        ✍️
+                    </span>
+                </div>
+
                 <button 
                     type="submit" 
-                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg sm:rounded-r-lg sm:rounded-l-none transition-all duration-300">
-                    Send
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg sm:rounded-r-lg sm:rounded-l-none transition-all duration-300 shadow-md font-semibold flex items-center justify-center">
+                    🚀 Send
                 </button>
             </form>
         </div>
-
         <script>
             const offerId = document.getElementById('offer_id').value;
 

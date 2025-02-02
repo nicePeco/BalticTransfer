@@ -45,6 +45,53 @@ class ClientController extends Controller
         return view('client.profile', compact('offers', 'appliedOffers'));
     }
 
+    public function search(Request $request)
+    {
+        $from = $request->input('from');
+        $to = $request->input('to');
+        $offers = [];
+        $appliedOffers = [];
+    
+        if (Auth::check() && Auth::user()->roles->contains('name', 'driver')) {
+            $offers = Offers::with('rides')
+                ->where(function ($query) {
+                    $query->whereNull('accepted_driver_id')
+                        ->orWhere('accepted_driver_id', Auth::user()->driver->id ?? null);
+                })
+                ->where('status', '!=', 'completed')
+                ->when($from, function ($query, $from) {
+                    $query->where('location_one', 'LIKE', "%{$from}%");
+                })
+                ->when($to, function ($query, $to) {
+                    $query->where('city_one', 'LIKE', "%{$to}%");
+                })
+                ->orderBy('city_two', 'asc')
+                ->get();
+    
+            $driverId = Auth::user()->driver->id ?? null;
+            if ($driverId) {
+                $appliedOffers = Ride::where('driver_id', $driverId)
+                    ->pluck('offer_id')
+                    ->toArray();
+            }
+        } else {
+            $offers = Offers::with('rides')
+                ->where('offers_id', Auth::id())
+                ->where('status', '!=', 'completed')
+                ->when($from, function ($query, $from) {
+                    $query->where('location_one', 'LIKE', "%{$from}%");
+                })
+                ->when($to, function ($query, $to) {
+                    $query->where('city_one', 'LIKE', "%{$to}%");
+                })
+                ->orderBy('city_two', 'asc')
+                ->get();
+        }
+    
+        return view('client.profile', compact('offers', 'appliedOffers', 'from', 'to'));
+    }
+    
+
     /**
      * Show the form for creating a new resource.
      */

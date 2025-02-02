@@ -51,17 +51,17 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg transform hover:scale-105 transition">
                     <p class="text-lg font-semibold">"The best travel experience I've had! Highly recommend."</p>
-                    <p class="text-gray-500 mt-2">- Alex Johnson</p>
+                    <p class="text-gray-500 mt-2">- Alex</p>
                 </div>
 
                 <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg transform hover:scale-105 transition">
                     <p class="text-lg font-semibold">"Easy to use, great drivers, and safe rides. Love it!"</p>
-                    <p class="text-gray-500 mt-2">- Sarah Williams</p>
+                    <p class="text-gray-500 mt-2">- Sarah</p>
                 </div>
 
                 <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg transform hover:scale-105 transition">
                     <p class="text-lg font-semibold">"Affordable prices and comfortable trips. Would use again!"</p>
-                    <p class="text-gray-500 mt-2">- Michael Lee</p>
+                    <p class="text-gray-500 mt-2">- Michael</p>
                 </div>
             </div>
         </div>
