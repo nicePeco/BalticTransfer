@@ -7,28 +7,17 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
 packages needed:
+
 Spatie's Laravel Permission package. 1. composer require spatie/laravel-permission 2. php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" 3. sail artisan migrate (https://spatie.be/docs/laravel-permission/v6/introduction)
+
 Hashids package. 1. composer require vinkla/hashids 2. sail artisan vendor:publish --provider="Vinkla\Hashids\HashidsServiceProvider" (https://github.com/vinkla/laravel-hashids)
 
 must do:
 need to make admin manually. 1. sail artisan tinker 2. $user = User::where('email', 'admin@example.com')->first(); 3. $user->assignRole('admin'); 4. exit
+
 if you want to remove the admin, than - 1. $user = User::where('email', 'admin@example.com')->first(); $user->removeRole('admin')
