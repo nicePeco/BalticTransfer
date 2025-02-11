@@ -7,7 +7,8 @@
         }
     </style>
 
-    <div class="relative bg-gray-100 min-h-screen">
+    <div class="relative min-h-screen">
+        <div class="pb-10">
         <div class="flex flex-col lg:flex-row max-w-6xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden mt-10">
             <form method="post" action="{{ route('offers.store') }}" enctype="multipart/form-data" class="w-full lg:w-1/2 p-8">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Claim Ride</h2>
@@ -119,6 +120,7 @@
             <div class="w-full lg:w-1/2 p-4">
                 <div id="map" class="rounded-lg shadow"></div>
             </div>
+        </div>
         </div>
     </div>
 

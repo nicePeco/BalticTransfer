@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureAdmin
+class EnsureDriver
 {
     /**
      * Handle an incoming request.
@@ -16,7 +16,7 @@ class EnsureAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check() || !Auth::user()->hasRole('admin')) {
+        if (!Auth::check() || !Auth::user()->hasRole('driver')) {
             abort(404, 'Unauthorized access');
         }
 

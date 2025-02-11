@@ -8,7 +8,7 @@
             </div>
         @endif
 
-        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+        <table class="w-full border-collapse border border-gray-300 bg-gray-400 dark:border-gray-600">
             <thead>
                 <tr>
                     <th class="border border-gray-300 dark:border-gray-600 p-2">Ride ID</th>

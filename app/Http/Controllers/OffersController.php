@@ -44,19 +44,6 @@ class OffersController extends Controller
         return view('offers.index', compact('offers', 'appliedOffers'));
     }
 
-    // public function search(Request $request)
-    // {
-    //     $search = $request->input('search');
-
-    //     $offers = Offers::query()
-    //         ->where(function ($query) use ($search) {
-    //             $query->where('city_one', 'LIKE', "%{$search}%")
-    //                 ->orWhere('city_two', 'LIKE', "%{$search}%");
-    //         })
-    //         ->orderBy('city_two', 'asc')
-    //         ->get();
-
-    //     return view('offers.index', compact('offers'));
     // }
 
     /**
@@ -92,30 +79,6 @@ class OffersController extends Controller
      */
     public function show($hashid)
     {
-        // $offers = Offers::with('rides')->findOrFail($id);
-
-        // if ($offers->accepted_driver_id) {
-        //     if (Auth::id() !== $offers->offers_id && (!Auth::user()->driver || Auth::user()->driver->id !== $offers->accepted_driver_id)) {
-        //         abort(403, 'You are not authorized to view this ride.');
-        //     }
-        // }
-
-        // $currentRide = null;
-
-        // if (Auth::check() && Auth::user()->driver) {
-        //     $currentRide = Ride::where('offer_id', $id)
-        //         ->where('driver_id', Auth::user()->driver->id ?? null)
-        //         ->first();
-        // }
-
-        // if ($offers->accepted_driver_id) {
-        //     $acceptedRide = $offers->rides->where('driver_id', $offers->accepted_driver_id)->first();
-
-        //     return view('offers.show', compact('offers', 'acceptedRide', 'currentRide'));
-        // }
-
-        // return view('offers.show', compact('offers', 'currentRide'));
-
         $hashids = new Hashids(env('APP_KEY'), 10);
         $decodedId = $hashids->decode($hashid);
 
@@ -200,32 +163,6 @@ class OffersController extends Controller
 
     public function showAcceptedRide($hashid)
     {
-        // $offer = offers::with(['rides.driver', 'user'])->findOrFail($offerId);
-
-        // $scheduledStartTime = Carbon::parse($offer->city_two);
-        
-        // $currentTime = Carbon::now('Europe/Riga');
-        
-        // if ($scheduledStartTime > $currentTime) {
-            
-        //     $timeLeftSeconds = $currentTime->diffInSeconds($scheduledStartTime, false);
-
-        //     $timeLeftMinutes = (int)($timeLeftSeconds / 60) - 120;
-        // } else {
-            
-        //     $timeLeftSeconds = $currentTime->diffInSeconds($scheduledStartTime, false);
-
-        //     $timeLeftMinutes = (int)($timeLeftSeconds / 60) - 120;
-        // }
-
-        // if (Auth::id() !== $offer->offers_id && (!$offer->accepted_driver_id || Auth::user()->driver->id !== $offer->accepted_driver_id)) {
-        //     abort(403, 'Unauthorized access');
-        // }
-
-        // $acceptedRide = $offer->rides->where('driver_id', $offer->accepted_driver_id)->first();
-
-        // return view('offers.accept', compact('offer', 'acceptedRide', 'timeLeftMinutes', 'scheduledStartTime', 'currentTime'));
-
         $hashids = new Hashids(env('APP_KEY'), 10);
         $decodedId = $hashids->decode($hashid);
 
@@ -285,23 +222,6 @@ class OffersController extends Controller
 
     public function ongoing($hashid)
     {
-        // $offer = Offers::with('rides')->findOrFail($offerId);
-
-        // if ($offer->status !== 'ongoing') {
-        //     abort(403, 'This ride is not currently ongoing.');
-        // }
-
-        // $acceptedRide = $offer->rides->where('driver_id', $offer->accepted_driver_id)->first();
-
-        // $scheduledStartTime = Carbon::parse($offer->city_two);
-        // $currentTime = Carbon::now('Europe/Riga');
-
-        // if (!$acceptedRide) {
-        //     abort(404, 'No accepted ride found for this offer.');
-        // }
-
-        // return view('offers.ongoing', compact('offer', 'scheduledStartTime', 'currentTime', 'acceptedRide'));
-        // Decode the hashed ID to get the numeric offer ID
         $hashids = new Hashids(env('APP_KEY'), 10);
         $decodedId = $hashids->decode($hashid);
 
@@ -382,14 +302,6 @@ class OffersController extends Controller
 
     public function rateDriverForm($hashid)
     {
-        // $offer = Offers::findOrFail($offerId);
-
-        // if (Auth::id() !== $offer->offers_id) {
-        //     abort(403, 'You are not authorized to rate this driver.');
-        // }
-
-        // return view('offers.rate', compact('offer'));
-
         $hashids = new Hashids(env('APP_KEY'), 10);
         $decodedId = $hashids->decode($hashid);
 
@@ -447,16 +359,6 @@ class OffersController extends Controller
 
     public function rateUserForm($hashid)
     {
-        // $offer = Offers::findOrFail($offerId);
-
-        // if (Auth::user()->driver && Auth::user()->driver->id !== $offer->accepted_driver_id) {
-        //     abort(403, 'You are not authorized to rate this user.');
-        // }
-
-        // return view('offers.rate_user', compact('offer'));
-
-        // Decode the hashed ID to retrieve the numeric offer ID
-        // Decode the hashed ID to retrieve the numeric offer ID
         $hashids = new Hashids(env('APP_KEY'), 10);
         $decodedId = $hashids->decode($hashid);
 

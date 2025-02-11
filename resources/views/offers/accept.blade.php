@@ -1,28 +1,26 @@
 <x-app-layout>
-    <div class="container mx-auto py-12">
-        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 rounded-lg shadow-lg flex justify-between items-center text-white relative">
-            <a href="{{ url()->previous() }}" class="bg-white text-blue-600 font-bold py-2 px-6 rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300">
-                ← Back
-            </a>
-            <div class="text-center flex-1">
-                <h1 class="text-4xl font-bold">Accepted Ride Details</h1>
-                <p class="text-lg">Here are the details of the accepted ride.</p>
+    <div class="container mx-auto py-12 px-4">
+        <div class="container mx-auto px-4">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 rounded-lg shadow-lg flex flex-col sm:flex-row justify-between items-center text-white relative">
+                <a href="{{ url()->previous() }}" class="bg-white text-blue-600 font-bold py-2 px-6 rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300">
+                    ← Back
+                </a>
+                <div class="text-center flex-1 mt-4 sm:mt-0">
+                    <h1 class="text-3xl sm:text-4xl font-bold">Accepted Ride Details</h1>
+                    <p class="text-lg">Here are the details of the accepted ride.</p>
+                </div>
+                @if ((Auth::id() === $offer->offers_id || Auth::user()->driver->id === $offer->accepted_driver_id) && $offer->status !== 'ongoing')
+                    <form action="{{ route('offers.destroy', $offer->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this ride?');" class="mt-4 sm:mt-0 sm:absolute sm:top-6 sm:right-6">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" 
+                                class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all duration-300">
+                            Cancel the Ride
+                        </button>
+                    </form>
+                @endif
             </div>
-            @if (
-                (Auth::id() === $offer->offers_id || Auth::user()->driver->id === $offer->accepted_driver_id) 
-                && $offer->status !== 'ongoing'
-                )
-                <form action="{{ route('offers.destroy', $offer->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this ride?');" class="absolute top-6 right-6">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" 
-                            class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all duration-300">
-                        Cancel the Ride
-                    </button>
-                </form>
-            @endif
         </div>
-
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mt-8">
         <div class="bg-gray-50 dark:bg-gray-900 p-5 rounded-lg shadow-md flex flex-col sm:flex-row sm:items-center justify-between mb-6">
             <!-- Time Left Indicator -->
@@ -134,6 +132,7 @@
                         <li><strong>Car Make:</strong> {{ $acceptedRide->driver->car_make }}</li>
                         <li><strong>Car Model:</strong> {{ $acceptedRide->driver->car_model }}</li>
                         <li><strong>Car Year:</strong> {{ $acceptedRide->driver->car_year }}</li>
+                        <li><strong>License plate:</strong> {{ $acceptedRide->driver->license_plate }}</li>
                         <li><strong>Price:</strong> €{{ number_format($acceptedRide->price, 2) }}</li>
                     </ul>
                 </div>
@@ -155,18 +154,6 @@
                     <p class="text-red-500">User information is not available.</p>
                 @endif
             </div>
-            <!-- @if (Auth::id() === $offer->offers_id || Auth::user()->driver->id === $offer->accepted_driver_id)
-                <div class="mt-8 text-center">
-                    <form action="{{ route('offers.destroy', $offer->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this ride?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" 
-                                class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all duration-300">
-                            Cancel the Ride
-                        </button>
-                    </form>
-                </div>
-            @endif -->
         </div>
         <div class="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-lg p-6 mt-12 w-full">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 border-b-2 pb-2">

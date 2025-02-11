@@ -3,6 +3,7 @@
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Profile') }}
         </h2>
+        @if (!Auth::user()->driver)
         <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             <span class="font-medium">{{ __('Your Rating:') }}</span>
             <span class="text-gray-800 dark:text-gray-200">
@@ -13,6 +14,7 @@
                 {{ Auth::user()->rating_count }}
             </span>
         </div>
+        @endif
     </x-slot>
 
     <div class="py-12">
@@ -52,15 +54,23 @@
                         </x-nav-link>
                     </div>
                 </div>
+                @if(auth()->user()->driver && auth()->user()->driver->verification_status !== 'approved')
+                    <div class="p-4 sm:p-8 bg-red-100/20 dark:bg-red-900/40 backdrop-blur-md border border-red-400 dark:border-red-600 shadow sm:rounded-lg">
+                        <div class="max-w-xl flex flex-row items-center justify-between sm:px-6 lg:px-8">
+                            <h1 class="text-gray-800 dark:text-gray-200 font-semibold text-lg">
+                                Verify Yourself
+                            </h1>
+                            <x-nav-link :href="route('driver.verify')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow">
+                                @lang('Update')
+                            </x-nav-link>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 mt-2">
+                            Your account is currently <strong class="text-yellow-500">{{ auth()->user()->driver->verification_status }}</strong>. 
+                            Please update your drivers license. If you have done this, than wait and we will confirm you as soon as possible.
+                        </p>
+                    </div>
+                @endif
             @endif
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl flex flex-row sm:px-6 lg:px-8">
-                    <h1 class="text-gray-200 mx-2">Verify yourself</h1>
-                    <x-nav-link :href="route('driver.verify')">
-                        @lang('Update')
-                    </x-nav-link>
-                </div>
-            </div>
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')

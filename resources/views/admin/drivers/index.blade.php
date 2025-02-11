@@ -33,7 +33,7 @@
             </div>
         @endif
 
-        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+        <table class="w-full border-collapse border border-gray-300 bg-gray-400 dark:border-gray-600">
             <thead>
                 <tr>
                     <th class="border border-gray-300 dark:border-gray-600 p-2">ID</th>
@@ -43,7 +43,7 @@
                     <th class="border border-gray-300 dark:border-gray-600 p-2">Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody> 
                 @foreach($drivers as $driver)
                     <tr>
                         <td class="border border-gray-300 dark:border-gray-600 p-2">{{ $driver->id }}</td>

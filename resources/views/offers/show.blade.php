@@ -1,9 +1,10 @@
 <x-app-layout>
-    <div class="bg-cover bg-fixed min-h-screen" style="background-image: url('https://www.tallinn.ee/themes/main_site/public/images/old_town_kaupo_kalda_2018_5_optimized.jpg')">
-        <section class="max-w-6xl mx-auto py-12 bg-gray-100 bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-70 rounded-lg shadow-lg p-8 backdrop-filter backdrop-blur-lg">
+    <div class="bg-cover bg-fixed min-h-screen" style="background-image: url('{{ asset('storage/images/tallin.webp') }}')">
+    <div class=" pt-10">
+        <section class="max-w-6xl mx-auto py-12 p-8 ">
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-extrabold text-gray-800 dark:text-white">Ride Details</h1>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Below are the details of the ride offer.</p>
+                <p class="text-sm text-gray-600 dark:text-white">Below are the details of the ride offer.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -69,7 +70,7 @@
             </div>
             @endif
         </section>
-
+        </div>
         @if($offers->accepted_driver_id)
             @php
                 $acceptedRide = $offers->rides->where('driver_id', $offers->accepted_driver_id)->first();
@@ -94,10 +95,12 @@
             @endif
         @else
             @if ($currentRide)
-                <div class="text-center mt-8">
-                <h2 class="text-green-500 font-bold text-xl">You have applied for this ride!</h2>
-                <p class="text-gray-600 dark:text-gray-300 mt-2">Your price: €{{ number_format($currentRide->price, 2) }}</p>
-                </div>
+            <div class="text-center mt-8 bg-green-50 dark:bg-green-900 p-6 rounded-lg shadow-md">
+                <h2 class="text-green-600 dark:text-green-400 font-extrabold text-2xl">✅ You have applied for this ride!</h2>
+                <p class="text-gray-700 dark:text-gray-300 mt-3 text-lg">
+                    Your price: <span class="text-green-700 dark:text-green-300 font-semibold">€{{ number_format($currentRide->price, 2) }}</span>
+                </p>
+            </div>
             @elseif (auth()->user()->hasRole('driver'))
             <form action="{{ route('rides.store') }}" method="post" class="max-w-6xl mx-auto mt-8 bg-gray-100 dark:bg-gray-900 rounded-lg shadow p-6">
                 @csrf
@@ -114,6 +117,7 @@
             </form> 
             @endif
             @if(auth()->id() == $offers->offers_id)
+            <div class="pb-10">
             <div class="max-w-6xl mx-auto mt-12 bg-gray-100 bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-70 rounded-lg shadow p-6 backdrop-filter backdrop-blur-lg">
                 <h2 class="text-center text-2xl font-bold text-gray-800 dark:text-white mb-6">Driver Applications</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -152,6 +156,7 @@
                     </div>
                     @endforeach
                 </div>
+            </div>
             </div>
             @endif
 

@@ -31,7 +31,8 @@
                     <ul class="text-lg space-y-4">
                         <li><strong>Make:</strong> {{ $driver->car_make }}</li>
                         <li><strong>Model:</strong> {{ $driver->car_model }}</li>
-                        <li><strong>Year:</strong> {{ $driver->car_year }}</li>
+                        <li><strong>Year:</strong> {{ $driver->car_year }}</li>license_plate
+                        <li><strong>License plate:</strong> {{ $driver->license_plate }}</li>
                     </ul>
                     <!-- car photo -->
                     @if ($driver->car_photo)

@@ -1,7 +1,6 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gray-100 py-12 flex flex-col items-center px-4 sm:px-0">
+    <div class="min-h-screen py-12 flex flex-col items-center px-4">
         <div class="relative w-full max-w-4xl mx-auto">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 shadow-lg transform -skew-y-3 sm:skew-y-0 sm:-rotate-3 sm:rounded-3xl"></div>
             <div class="relative bg-white shadow-lg sm:rounded-3xl px-6 py-10 sm:px-10 sm:py-12">
                 <div class="text-center">
                     <h1 class="text-3xl font-bold text-gray-800">🚖 Ongoing Ride</h1>

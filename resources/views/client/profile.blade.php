@@ -119,16 +119,11 @@
                 </div>
         @endif
         @empty
-        <div class="flex flex-col items-center justify-center py-20">
-            <div class="text-sky-700">
-                <svg class="w-16 h-16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m0 0l-6-6m6 6H3"></path>
-                </svg>
-            </div>
+        <div class="flex flex-col text-center items-center justify-center py-20 bg-black/40 rounded-lg shadow-md">
             <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-6">
                 No Ride Offers Available
             </h2>
-            <p class="text-gray-500 mt-4 text-lg text-center max-w-lg">
+            <p class="text-gray-600 dark:text-gray-300 mt-4 text-lg text-center max-w-lg">
                 It looks like there are no rides available for you at the moment. Keep checking back or try refreshing the page!
             </p>
         </div>

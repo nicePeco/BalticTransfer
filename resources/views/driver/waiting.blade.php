@@ -18,12 +18,12 @@
                 <ul class="mt-2 space-y-3 text-gray-700 dark:text-gray-300">
                     <li class="flex items-center">
                         <span class="bg-blue-500 text-white px-3 py-1 rounded-md mr-3">1</span>
-                        Upload your <strong>Driver's License</strong> → 
+                        Upload your Driver's License → 
                         <a href="{{ route('driver.verify') }}" class="text-blue-500 hover:underline ml-1">Click Here</a>
                     </li>
                     <li class="flex items-center">
                         <span class="bg-blue-500 text-white px-3 py-1 rounded-md mr-3">2</span>
-                        Upload <strong>Photos of Your Car</strong> & License Plate → 
+                        Upload Photos of Your Car & License Plate → 
                         <a href="{{ route('driver.edit') }}" class="text-blue-500 hover:underline ml-1">Click Here</a>
                     </li>
                 </ul>

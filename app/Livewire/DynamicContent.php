@@ -6,9 +6,9 @@ use Livewire\Component;
 
 class DynamicContent extends Component
 {
-    public $view = 'home'; // Default view to load
+    public $view = 'home';
 
-    protected $listeners = ['navigate']; // Listen for navigation events
+    protected $listeners = ['navigate'];
 
     public function navigate($view)
     {

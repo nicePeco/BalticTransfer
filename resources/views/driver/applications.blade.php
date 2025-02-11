@@ -1,6 +1,8 @@
 <x-app-layout>
     <div class="relative overflow-hidden rounded-lg bg-cover bg-no-repeat p-12 text-center">
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">My Applications</h1>
+        <h1 class="text-2xl font-bold text-gray-400 bg-gray-100 dark:bg-gray-700 px-6 py-3 rounded-md shadow mb-6 inline-block">
+        My Applications
+        </h1>
         <div class="hidden md:block relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -48,7 +50,15 @@
                         @endif
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">No applications found.</td>
+                        <td colspan="6" class="px-6 py-12 text-center text-black bg-gray-800">
+                            <div class="flex flex-col items-center justify-center">
+                                <h2 class="text-lg font-semibold text-gray-400">No applications found</h2>
+                                <p class="text-gray-500 dark:text-gray-400 mb-4">You haven't applied for any rides yet. Start exploring offers now!</p>
+                                <a href="{{ route('client.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow">
+                                    Find a Ride
+                                </a>
+                            </div>
+                        </td>
                         </tr>
                     @endforelse
                 </tbody>
