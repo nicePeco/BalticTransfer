@@ -127,7 +127,7 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <script>
-        const apiKey = '34a932be97cd47f98436554fdd061734'; // OpenCage API Key
+        const apiKey = "{{ env('OPENCAGE_TOKEN') }}"; // OpenCage API Key
 
         let map;
         let fromCoords = null, toCoords = null;
@@ -164,7 +164,7 @@
             });
         }
 
-        mapboxgl.accessToken = 'pk.eyJ1Ijoibmlra29wZWNvIiwiYSI6ImNtNHBrZzdmNDBzODkydHFzYnNjeXZuaWcifQ.bGsLtoqkkZPzkNdOy2cw9w'; //mapBox key
+        mapboxgl.accessToken = "{{ env('MAPBOX_TOKEN') }}"; //mapBox key
         map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',

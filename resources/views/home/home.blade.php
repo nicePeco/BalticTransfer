@@ -1,5 +1,5 @@
 <x-app-layout>
-        <section class="relative bg-center bg-cover bg-no-repeat h-screen" style="background-image: url('{{ asset('storage/images/home-blade.jpg') }}');">
+        <section class="relative bg-center bg-cover bg-no-repeat h-screen" style="background-image: url('{{ asset('images/homeBlade.jpg') }}');">
             <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/30"></div>
             <div class="relative px-4 mx-auto max-w-screen-xl text-center py-24 lg:py-56">
                 <h1 class="mb-6 text-5xl font-extrabold tracking-tight leading-tight text-white sm:text-6xl lg:text-7xl">

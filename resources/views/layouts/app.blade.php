@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-cover bg-no-repeat bg-fixed" style="background-image: url('{{ asset('storage/images/bgmain.webp') }}')">
+        <div class="min-h-screen bg-cover bg-no-repeat bg-fixed" style="background-image: url('{{ asset('images/bgmain.webp') }}')">
             @include('layouts.navigation')
             @livewire('dynamic-content')
 

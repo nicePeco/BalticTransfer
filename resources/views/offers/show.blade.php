@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="bg-cover bg-fixed min-h-screen" style="background-image: url('{{ asset('storage/images/tallin.webp') }}')">
+    <div class="bg-cover bg-fixed min-h-screen" style="background-image: url('{{ asset('images/tallin.webp') }}')">
     <div class=" pt-10">
         <section class="max-w-6xl mx-auto py-12 p-8 ">
             <div class="text-center mb-8">
